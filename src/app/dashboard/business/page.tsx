@@ -14,7 +14,7 @@ export default async function BusinessDashboard() {
     // For specific demo user 'business1@demo.com', their id is 'biz_1'.
 
     // Simple filter: if user email is businessX@demo.com, we strip 'business' and get ID.
-    let userJobs = [];
+    let userJobs: any[] = [];
     if (session?.user?.email) {
         // Find our internal ID if possible, but session id might be different if we didn't persist perfectly.
         // Let's rely on the store's findUserByEmail if we could, but this is a server component.

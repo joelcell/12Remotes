@@ -29,6 +29,8 @@ export interface Job {
     postedAt: Date;
 }
 
+import { SEED_USERS, SEED_JOBS } from './seed_data';
+
 // Global store to persist across server actions in dev env (sometimes)
 // In Next.js App Router, globalThis is often used to keep singleton in dev.
 const globalForStore = globalThis as unknown as {
@@ -36,8 +38,8 @@ const globalForStore = globalThis as unknown as {
     mockJobs: Job[] | undefined;
 };
 
-export const users: User[] = globalForStore.mockUsers || [];
-export const jobs: Job[] = globalForStore.mockJobs || [];
+export const users: User[] = globalForStore.mockUsers || SEED_USERS;
+export const jobs: Job[] = globalForStore.mockJobs || SEED_JOBS;
 
 if (process.env.NODE_ENV !== "production") {
     globalForStore.mockUsers = users;
