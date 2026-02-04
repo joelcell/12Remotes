@@ -8,21 +8,26 @@ import { Search, MapPin, DollarSign, Filter, X, Check } from "lucide-react";
 import { useState } from "react";
 import clsx from "clsx";
 
-// Dummy Data
-const JOBS = [
-    { id: 1, title: "Senior Engineering Manager", company: "Fintech Global", location: "Remote", salary: "$120k - $160k", category: "Engineering" },
-    { id: 2, title: "Product Lead", company: "SaaS Corp", location: "Remote (EU)", salary: "$100k - $140k", category: "Product" },
-    { id: 3, title: "Head of Marketing", company: "Creative Inc", location: "Remote (US)", salary: "$130k - $180k", category: "Marketing" },
-    { id: 4, title: "Operations Director", company: "Logistics Co", location: "Global", salary: "$110k - $150k", category: "Operations" },
-];
+import { fetchJobs } from "@/app/lib/data";
+import { useEffect } from "react";
+import { Job } from "@/app/lib/store";
 
 export default function Marketplace() {
+    const [jobs, setJobs] = useState<Job[]>([]);
+    const [loading, setLoading] = useState(true);
     const [search, setSearch] = useState("");
     const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
     const [showOnboarding, setShowOnboarding] = useState(true);
     const [preferences, setPreferences] = useState({ role: "", location: "" });
 
-    const filteredJobs = JOBS.filter(job => {
+    useEffect(() => {
+        fetchJobs().then(data => {
+            setJobs(data);
+            setLoading(false);
+        });
+    }, []);
+
+    const filteredJobs = jobs.filter((job: Job) => {
         const matchesSearch = job.title.toLowerCase().includes(search.toLowerCase());
         const matchesCategory = selectedCategory ? job.category === selectedCategory : true;
         const matchesPref = preferences.role ? job.title.toLowerCase().includes(preferences.role.toLowerCase()) : true;
@@ -153,7 +158,9 @@ export default function Marketplace() {
                         )}
 
                         <div className="grid gap-4">
-                            {filteredJobs.length > 0 ? filteredJobs.map((job) => (
+                            {loading ? (
+                                <p className="text-center text-muted">Loading jobs...</p>
+                            ) : filteredJobs.length > 0 ? filteredJobs.map((job) => (
                                 <JobCard key={job.id} job={job} onApply={() => handleApply(job.id)} />
                             )) : (
                                 <div className="text-center py-20 text-muted">
@@ -185,7 +192,7 @@ function JobCard({ job, onApply }: { job: any, onApply: () => void }) {
             <div className="flex justify-between items-start mb-4">
                 <div>
                     <h3 className="text-xl font-bold group-hover:text-primary transition-colors">{job.title}</h3>
-                    <p className="text-muted">{job.company}</p>
+                    <p className="text-muted">{job.companyName}</p>
                 </div>
                 <span className="bg-red-50 text-primary px-3 py-1 rounded-full text-sm font-medium">{job.location}</span>
             </div>

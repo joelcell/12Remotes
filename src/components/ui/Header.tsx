@@ -3,11 +3,13 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { Menu, X, Globe, Briefcase, Users } from "lucide-react";
+import { Menu, X, Globe, Briefcase, Users, LayoutDashboard } from "lucide-react";
+import { useSession } from "next-auth/react";
 import Image from "next/image";
 
 export default function Header() {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const { data: session } = useSession();
 
     return (
         <header className="fixed top-0 left-0 right-0 z-50 glass-panel border-b border-red-900/10 bg-white/85 backdrop-blur-md">
@@ -36,10 +38,21 @@ export default function Header() {
                         <Users size={18} />
                         Talent Pool
                     </Link>
-                    <button className="bg-primary text-white px-5 py-2.5 rounded-lg hover:bg-red-800 transition-all flex items-center gap-2 font-semibold shadow-lg shadow-red-900/20">
-                        <Globe size={18} />
-                        Global Login
-                    </button>
+                    {session?.user ? (
+                        <Link href={session.user.email?.includes('business') || (session.user as any).role === 'BUSINESS' ? "/dashboard/business" : "/dashboard/talent"}>
+                            <button className="bg-primary text-white px-5 py-2.5 rounded-lg hover:bg-red-800 transition-all flex items-center gap-2 font-semibold shadow-lg shadow-red-900/20">
+                                <LayoutDashboard size={18} />
+                                Dashboard
+                            </button>
+                        </Link>
+                    ) : (
+                        <Link href="/login">
+                            <button className="bg-primary text-white px-5 py-2.5 rounded-lg hover:bg-red-800 transition-all flex items-center gap-2 font-semibold shadow-lg shadow-red-900/20">
+                                <Globe size={18} />
+                                Global Login
+                            </button>
+                        </Link>
+                    )}
                 </nav>
 
                 {/* Mobile Menu Button */}
@@ -56,7 +69,17 @@ export default function Header() {
                 <div className="md:hidden glass-panel border-t border-red-900/10 p-4 space-y-4 bg-white/95">
                     <Link href="/marketplace" className="block text-foreground hover:text-primary py-3 font-medium text-lg">Find Work</Link>
                     <Link href="/talent" className="block text-foreground hover:text-primary py-3 font-medium text-lg">Talent Pool</Link>
-                    <button className="bg-primary text-white w-full py-3 rounded-lg font-semibold">Global Login</button>
+                    {session?.user ? (
+                        <Link href={session.user.email?.includes('business') || (session.user as any).role === 'BUSINESS' ? "/dashboard/business" : "/dashboard/talent"} className="block">
+                            <button className="bg-primary text-white w-full py-3 rounded-lg font-semibold flex items-center justify-center gap-2">
+                                <LayoutDashboard size={18} /> Dashboard
+                            </button>
+                        </Link>
+                    ) : (
+                        <Link href="/login" className="block">
+                            <button className="bg-primary text-white w-full py-3 rounded-lg font-semibold">Global Login</button>
+                        </Link>
+                    )}
                 </div>
             )}
         </header>
