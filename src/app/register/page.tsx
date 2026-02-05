@@ -1,9 +1,9 @@
-import LoginForm from './LoginForm';
-import { Suspense } from 'react';
-import { ShieldCheck } from 'lucide-react';
+
+import RegisterForm from './RegisterForm';
+import { UserPlus } from 'lucide-react';
 import Link from 'next/link';
 
-export default function LoginPage() {
+export default function RegisterPage() {
     return (
         <div className="flex bg-gray-50/50 min-h-screen flex-col items-center justify-center p-6 md:p-12 font-sans overflow-hidden relative">
             {/* Background Decoration */}
@@ -12,19 +12,17 @@ export default function LoginPage() {
             <div className="w-full max-w-lg rounded-3xl bg-white p-10 md:p-16 shadow-2xl shadow-gray-200 border border-gray-100 animate-slide-up relative z-10">
                 <div className="flex justify-center mb-8">
                     <div className="w-16 h-16 bg-red-50 text-primary rounded-2xl flex items-center justify-center shadow-lg shadow-red-900/10 border border-primary/10">
-                        <ShieldCheck size={32} />
+                        <UserPlus size={32} />
                     </div>
                 </div>
 
-                <h1 className="mb-2 text-4xl font-extrabold text-center text-gray-900 tracking-tight">Chào mừng trở lại</h1>
-                <p className="text-gray-400 text-center mb-10 font-bold uppercase tracking-widest text-xs">Vào trung tâm điều hành 12remotes</p>
+                <h1 className="mb-2 text-4xl font-extrabold text-center text-gray-900 tracking-tight">Gia nhập đội ngũ</h1>
+                <p className="text-gray-400 text-center mb-10 font-bold uppercase tracking-widest text-xs">Khởi đầu hành trình remote của bạn</p>
 
-                <Suspense fallback={<div className="h-64 flex items-center justify-center text-gray-400 font-bold animate-pulse">Đang tải trình điều khiển...</div>}>
-                    <LoginForm />
-                </Suspense>
+                <RegisterForm />
 
                 <p className="mt-10 text-center text-gray-400 text-sm font-medium">
-                    Chưa có tài khoản? <Link href="/register" className="text-primary font-bold cursor-pointer hover:underline underline-offset-4 transition-all">Gia nhập đội ngũ ngay</Link>
+                    Đã có tài khoản? <Link href="/login" className="text-primary font-bold cursor-pointer hover:underline underline-offset-4 transition-all">Đăng nhập tại đây</Link>
                 </p>
             </div>
         </div>

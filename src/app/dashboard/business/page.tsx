@@ -43,11 +43,11 @@ export default async function BusinessDashboard() {
                 </div>
 
                 <nav className="flex-1 px-4 space-y-1">
-                    <NavItem icon={<LayoutDashboard size={20} />} label="Overview" active />
+                    <NavItem icon={<LayoutDashboard size={20} />} label="Overview" active href="/dashboard/business" />
                     <NavItem icon={<Briefcase size={20} />} label="My Jobs" badge={userJobs.length} />
                     <NavItem icon={<Users size={20} />} label="Candidates" badge={12} />
                     <NavItem icon={<FileText size={20} />} label="Billing" />
-                    <NavItem icon={<Settings size={20} />} label="Settings" />
+                    <NavItem icon={<Settings size={20} />} label="Settings" href="/dashboard/business/settings" />
                 </nav>
 
                 <div className="p-4 border-t border-gray-100">
@@ -79,10 +79,10 @@ export default async function BusinessDashboard() {
                         <h1 className="text-2xl font-bold text-gray-900">Dashboard Overview</h1>
                         <p className="text-gray-500">Welcome back, here's what's happening with your jobs.</p>
                     </div>
-                    <button className="bg-primary text-white px-4 py-2 rounded-lg font-medium hover:bg-red-800 transition-colors flex items-center gap-2 shadow-lg shadow-red-900/10">
+                    <Link href="/dashboard/business/post-job" className="bg-primary text-white px-4 py-2 rounded-lg font-medium hover:bg-red-800 transition-colors flex items-center gap-2 shadow-lg shadow-red-900/10">
                         <PlusCircle size={18} />
                         Post New Job
-                    </button>
+                    </Link>
                 </div>
 
                 {/* Stats Grid */}
@@ -117,7 +117,9 @@ export default async function BusinessDashboard() {
                                 {userJobs.length > 0 ? userJobs.map((job) => (
                                     <tr key={job.id} className="hover:bg-gray-50 transition-colors">
                                         <td className="px-6 py-4">
-                                            <p className="font-bold text-gray-900">{job.title}</p>
+                                            <Link href={`/jobs/${job.id}`} className="font-bold text-gray-900 hover:text-primary transition-colors block">
+                                                {job.title}
+                                            </Link>
                                             <p className="text-xs text-gray-500">{job.location}</p>
                                         </td>
                                         <td className="px-6 py-4">
@@ -177,14 +179,24 @@ function StatCard({ icon, label, value, trend }: any) {
     );
 }
 
-function NavItem({ icon, label, active, badge }: any) {
+function NavItem({ icon, label, active, badge, href = "#" }: any) {
     return (
-        <a href="#" className={`flex items-center justify-between px-3 py-2.5 rounded-lg text-sm font-medium transition-colors mb-1 ${active ? 'bg-primary/5 text-primary' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'}`}>
+        <Link href={href} className={clsx(
+            "flex items-center justify-between px-3 py-2.5 rounded-lg text-sm font-medium transition-colors mb-1",
+            active ? 'bg-primary text-white shadow-md shadow-red-900/10' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+        )}>
             <div className="flex items-center gap-3">
                 {icon}
                 {label}
             </div>
-            {badge && <span className="bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full text-xs font-bold">{badge}</span>}
-        </a>
+            {badge && <span className={clsx(
+                "px-2 py-0.5 rounded-full text-xs font-bold",
+                active ? "bg-white/20 text-white" : "bg-gray-100 text-gray-600"
+            )}>{badge}</span>}
+        </Link>
     )
+}
+
+function clsx(...classes: any[]) {
+    return classes.filter(Boolean).join(' ');
 }

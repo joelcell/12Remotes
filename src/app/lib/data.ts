@@ -1,6 +1,10 @@
 'use server'
-import { getJobs } from "@/app/lib/store"
+import { getJobs, getJobById } from "@/app/lib/store"
 
 export async function fetchJobs() {
     return getJobs();
+}
+
+export async function fetchJobById(id: number) {
+    return getJobById(id);
 }

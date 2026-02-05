@@ -61,3 +61,7 @@ export function findUserByEmail(email: string) {
 export function getJobs() {
     return jobs;
 }
+
+export function getJobById(id: number) {
+    return jobs.find(j => j.id === id);
+}

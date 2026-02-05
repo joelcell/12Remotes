@@ -22,17 +22,30 @@ export const authConfig = {
             const isLoggedIn = !!auth?.user
             const isOnDashboard = nextUrl.pathname.startsWith('/dashboard')
             const isOnLogin = nextUrl.pathname.startsWith('/login')
+            const userRole = (auth?.user as any)?.role
 
             if (isOnDashboard) {
-                if (isLoggedIn) return true
-                return false // Redirect unauthenticated users to login page
-            } else if (isLoggedIn && isOnLogin) {
-                // Redirect to appropriate dashboard if already logged in
-                const role = (auth.user as any).role
-                if (role === 'BUSINESS') {
+                if (!isLoggedIn) return false // Redirect unauthenticated users to login page
+
+                // Check for cross-role access
+                if (nextUrl.pathname.startsWith('/dashboard/business') && userRole !== 'BUSINESS') {
+                    return Response.redirect(new URL('/dashboard/talent', nextUrl))
+                }
+                if (nextUrl.pathname.startsWith('/dashboard/talent') && userRole !== 'TALENT') {
                     return Response.redirect(new URL('/dashboard/business', nextUrl))
                 }
-                return Response.redirect(new URL('/dashboard/talent', nextUrl))
+
+                // Generic /dashboard path: redirect based on role
+                if (nextUrl.pathname === '/dashboard') {
+                    const destination = userRole === 'BUSINESS' ? '/dashboard/business' : '/dashboard/talent'
+                    return Response.redirect(new URL(destination, nextUrl))
+                }
+
+                return true
+            } else if (isLoggedIn && isOnLogin) {
+                // Redirect to appropriate dashboard if already logged in and trying to go to login page
+                const destination = userRole === 'BUSINESS' ? '/dashboard/business' : '/dashboard/talent'
+                return Response.redirect(new URL(destination, nextUrl))
             }
             return true
         },

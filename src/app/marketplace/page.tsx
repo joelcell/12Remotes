@@ -6,6 +6,7 @@ import Footer from "@/components/ui/Footer";
 import CurrencyConverter from "@/components/ui/CurrencyConverter";
 import { Search, MapPin, DollarSign, Filter, X, Check } from "lucide-react";
 import { useState } from "react";
+import Link from "next/link";
 import clsx from "clsx";
 
 import { fetchJobs } from "@/app/lib/data";
@@ -209,9 +210,12 @@ function JobCard({ job, onApply }: { job: any, onApply: () => void }) {
             </div>
 
             <div className="flex gap-3">
-                <button className="flex-1 bg-white border border-gray-200 text-foreground py-2 rounded-lg hover:border-primary hover:text-primary transition-colors font-medium">
+                <Link
+                    href={`/jobs/${job.id}`}
+                    className="flex-1 bg-white border border-gray-200 text-foreground py-2 rounded-lg hover:border-primary hover:text-primary transition-colors font-medium text-center"
+                >
                     View Details
-                </button>
+                </Link>
                 <button
                     onClick={onApply}
                     className="flex-1 bg-primary text-white py-2 rounded-lg hover:bg-red-800 transition-colors font-medium shadow-md shadow-red-900/10"

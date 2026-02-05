@@ -2,9 +2,10 @@
 "use client";
 
 import Header from "@/components/ui/Header";
+import Link from "next/link";
 import PartnerLogos from "@/components/ui/PartnerLogos";
 import JobCategories from "@/components/ui/JobCategories";
-import { ArrowRight, Globe, ShieldCheck, Zap } from "lucide-react";
+import { ArrowRight, Globe, ShieldCheck, Zap, Briefcase } from "lucide-react";
 import Image from "next/image";
 
 export default function Home() {
@@ -45,10 +46,14 @@ export default function Home() {
           </p>
 
           <div className="animate-slide-up [animation-delay:600ms] flex flex-col sm:flex-row items-center justify-center gap-5 pt-8">
-            <button className="group bg-primary text-white text-lg px-10 py-5 rounded-full font-bold transition-all hover:bg-red-800 hover:shadow-2xl hover:shadow-red-900/30 hover:-translate-y-1 flex items-center gap-3">
+            <Link href="/login?role=BUSINESS" className="group bg-primary text-white text-lg px-10 py-5 rounded-full font-bold transition-all hover:bg-red-800 hover:shadow-2xl hover:shadow-red-900/30 hover:-translate-y-1 flex items-center gap-3">
               Start Hiring
               <ArrowRight className="group-hover:translate-x-1 transition-transform" />
-            </button>
+            </Link>
+            <Link href="/marketplace" className="group bg-white border-2 border-primary text-primary text-lg px-10 py-5 rounded-full font-bold transition-all hover:bg-red-50 hover:shadow-2xl hover:shadow-red-900/5 hover:-translate-y-1 flex items-center gap-3">
+              Find Remote Jobs
+              <Briefcase className="group-hover:scale-110 transition-transform" size={20} />
+            </Link>
           </div>
 
           <div className="animate-fade-in [animation-delay:1000ms] pt-12 text-xs font-bold text-gray-400 uppercase tracking-widest">

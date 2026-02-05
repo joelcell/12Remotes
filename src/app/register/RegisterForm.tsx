@@ -1,37 +1,18 @@
 'use client';
 
-import { authenticate } from '@/app/lib/actions';
-import { useActionState, useState, useEffect } from 'react';
+import { register } from '@/app/lib/actions';
+import { useActionState, useState } from 'react';
 import { useFormStatus } from 'react-dom';
-import { Briefcase, User, Mail, Lock, ArrowRight } from 'lucide-react';
-import { useSearchParams } from 'next/navigation';
+import { Briefcase, User, Mail, Lock, ArrowRight, UserPlus } from 'lucide-react';
+import Link from 'next/link';
 
-export default function LoginForm() {
-    const searchParams = useSearchParams();
-    const [errorMessage, dispatch] = useActionState(authenticate, undefined);
-    const initialRole = (searchParams.get('role') as 'BUSINESS' | 'TALENT') || 'BUSINESS';
-    const [role, setRole] = useState<'BUSINESS' | 'TALENT'>(initialRole);
-
-    useEffect(() => {
-        const urlRole = searchParams.get('role') as 'BUSINESS' | 'TALENT';
-        if (urlRole && (urlRole === 'BUSINESS' || urlRole === 'TALENT')) {
-            setRole(urlRole);
-        }
-    }, [searchParams]);
-
-    const isRegistered = searchParams.get('registered') === 'true';
+export default function RegisterForm() {
+    const [errorMessage, dispatch] = useActionState(register, undefined);
+    const [role, setRole] = useState<'BUSINESS' | 'TALENT'>('TALENT');
 
     return (
         <form action={dispatch} className="space-y-6">
-            {isRegistered && (
-                <div className="bg-green-50 border border-green-100 p-4 rounded-2xl flex items-center gap-3 animate-fade-in mb-6">
-                    <div className="bg-green-500 text-white p-1 rounded-full">
-                        <ArrowRight size={14} className="rotate-[-45deg]" />
-                    </div>
-                    <p className="text-sm font-bold text-green-700">Đăng ký thành công! Hãy đăng nhập ngay.</p>
-                </div>
-            )}
-            {/* Role Toggle - Modernized */}
+            {/* Role Toggle */}
             <div className="bg-gray-50 p-1.5 rounded-2xl border border-gray-100 flex items-center mb-8 relative shadow-inner">
                 <button
                     type="button"
@@ -60,6 +41,23 @@ export default function LoginForm() {
 
             <div className="space-y-5">
                 <div className="space-y-2">
+                    <label className="text-xs font-bold text-gray-400 uppercase tracking-widest ml-1" htmlFor="name">
+                        Họ và tên
+                    </label>
+                    <div className="relative group">
+                        <UserPlus className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300 group-focus-within:text-primary transition-colors" size={18} />
+                        <input
+                            className="w-full rounded-2xl border border-gray-100 bg-gray-50 p-4 pl-12 text-sm outline-none focus:bg-white focus:border-primary focus:ring-4 focus:ring-primary/5 transition-all font-medium"
+                            id="name"
+                            type="text"
+                            name="name"
+                            placeholder="Nguyễn Văn A"
+                            required
+                        />
+                    </div>
+                </div>
+
+                <div className="space-y-2">
                     <label className="text-xs font-bold text-gray-400 uppercase tracking-widest ml-1" htmlFor="email">
                         Địa chỉ Email
                     </label>
@@ -75,6 +73,7 @@ export default function LoginForm() {
                         />
                     </div>
                 </div>
+
                 <div className="space-y-2">
                     <label className="text-xs font-bold text-gray-400 uppercase tracking-widest ml-1" htmlFor="password">
                         Mật khẩu
@@ -86,6 +85,7 @@ export default function LoginForm() {
                             id="password"
                             type="password"
                             name="password"
+                            placeholder="••••••••"
                             minLength={6}
                             required
                         />
@@ -102,12 +102,13 @@ export default function LoginForm() {
                     <p className="text-xs font-bold text-red-500 animate-pulse">{errorMessage}</p>
                 )}
             </div>
-            <LoginButton />
+
+            <SignUpButton />
         </form>
     );
 }
 
-function LoginButton() {
+function SignUpButton() {
     const { pending } = useFormStatus();
 
     return (
@@ -115,9 +116,9 @@ function LoginButton() {
             className="flex w-full items-center justify-center gap-3 rounded-2xl bg-primary px-8 py-4 text-lg font-extrabold text-white transition-all hover:bg-red-800 hover:shadow-2xl hover:shadow-red-900/30 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:opacity-50 disabled:translate-y-0 active:scale-[0.98]"
             aria-disabled={pending}
         >
-            {pending ? 'Đang xác thực...' : (
+            {pending ? 'Đang tạo tài khoản...' : (
                 <>
-                    Đăng nhập ngay
+                    Bắt đầu ngay
                     <ArrowRight size={20} />
                 </>
             )}

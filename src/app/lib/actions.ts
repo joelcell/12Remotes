@@ -29,7 +29,10 @@ export async function handleSignOut() {
     await signOut()
 }
 
-import { addUser, findUserByEmail } from './store';
+import { addUser, findUserByEmail, addJob } from './store';
+import { revalidatePath } from 'next/cache';
+import { redirect } from 'next/navigation';
+import { auth } from '@/auth';
 
 export async function register(prevState: string | undefined, formData: FormData) {
     try {
@@ -55,11 +58,63 @@ export async function register(prevState: string | undefined, formData: FormData
             image: `https://avatar.vercel.sh/${email}`
         });
 
-        // Auto login after register? Or redirect to login.
-        // For simplicity, let's just return success or redirect to login.
-        // We can't easily sign in from here without credentials flow again or custom signin.
-        // Let's redirect to login.
+        revalidatePath('/login');
     } catch (error) {
         return 'Registration failed.';
     }
+    redirect('/login?registered=true');
+}
+
+export async function createJob(prevState: any, formData: FormData) {
+    const session = await auth();
+    if (!session?.user?.email) {
+        return 'Unauthorized';
+    }
+
+    // In this demo, we find business ID by email or assume it's stored in session
+    // For simplicity, let's just use the email as an identifier if we don't have a solid ID in session.
+    // Ideally, session.user.id should be biz_X if they logged in as businessX@demo.com.
+
+    const emailMatch = session.user.email.match(/business(\d+)@demo.com/);
+    const bizId = emailMatch ? `biz_${emailMatch[1]}` : 'biz_custom';
+    const bizName = (session.user as any).companyName || `Company of ${session.user.name}`;
+
+    const title = formData.get('title') as string;
+    const category = formData.get('category') as any;
+    const location = formData.get('location') as string;
+    const salary = formData.get('salary') as string;
+    const bonus = formData.get('bonus') as string;
+    const description = formData.get('description') as string;
+    const requirements = (formData.get('requirements') as string || '').split('\n').filter(r => r.trim());
+    const responsibilities = (formData.get('responsibilities') as string || '').split('\n').filter(r => r.trim());
+    const benefits = (formData.get('benefits') as string || '').split('\n').filter(r => r.trim());
+    const companyInfo = formData.get('companyInfo') as string;
+
+    if (!title || !category || !description) {
+        return 'Missing required fields.';
+    }
+
+    addJob({
+        id: Math.floor(Math.random() * 1000000),
+        title,
+        companyId: bizId,
+        companyName: bizName,
+        location,
+        salary,
+        category,
+        description,
+        requirements,
+        responsibilities,
+        benefits,
+        bonus,
+        companyInfo,
+        status: 'Active',
+        applicantsCount: 0,
+        viewsCount: 0,
+        postedAt: new Date()
+    });
+
+    revalidatePath('/dashboard/business');
+    revalidatePath('/marketplace');
+    redirect('/dashboard/business');
 }
