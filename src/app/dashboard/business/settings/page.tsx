@@ -85,7 +85,7 @@ export default async function BusinessSettingsPage() {
                                     <div className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
                                         <div className="space-y-2">
                                             <label className="text-xs font-bold text-gray-400 uppercase tracking-widest">Tên công ty</label>
-                                            <input type="text" defaultValue={(session?.user as any).companyName || "Công ty mới"} className="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all font-medium" />
+                                            <input type="text" defaultValue={(session?.user as { companyName?: string }).companyName || "Công ty mới"} className="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all font-medium" />
                                         </div>
                                         <div className="space-y-2">
                                             <label className="text-xs font-bold text-gray-400 uppercase tracking-widest">Lĩnh vực hoạt động</label>
@@ -142,7 +142,7 @@ export default async function BusinessSettingsPage() {
     );
 }
 
-function NavItem({ icon, label, active, badge, href = "#" }: any) {
+function NavItem({ icon, label, active, badge, href = "#" }: { icon: React.ReactNode, label: string, active?: boolean, badge?: number, href?: string }) {
     return (
         <Link href={href} className={clsx(
             "flex items-center justify-between px-3 py-2.5 rounded-lg text-sm font-medium transition-colors mb-1",

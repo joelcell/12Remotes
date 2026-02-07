@@ -1,121 +1,164 @@
 
 import Header from "@/components/ui/Header";
 import Footer from "@/components/ui/Footer";
-import { Star, Shield, Briefcase, GraduationCap, Link as LinkIcon, Mail, Phone, MapPin } from "lucide-react";
-import Link from 'next/link';
+import { fetchTalentById } from "@/app/lib/data";
+import { initializeDemoData } from "@/app/lib/demo-data";
+import { notFound } from "next/navigation";
+import { Briefcase, Calendar, CheckCircle2, Globe, GraduationCap, Mail, MapPin, Share2, Shield, Star, Award, Zap } from "lucide-react";
+import Link from "next/link";
 
-export default function TalentProfile({ params }: { params: { id: string } }) {
+interface Props {
+    params: { id: string };
+}
+
+export default async function TalentProfilePage({ params }: Props) {
+    initializeDemoData();
+    const { id } = await params;
+    const talent = await fetchTalentById(id);
+
+    if (!talent) {
+        notFound();
+    }
+
     return (
-        <div className="min-h-screen bg-background text-foreground flex flex-col">
+        <div className="min-h-screen bg-[#F8F9FB] text-gray-900 flex flex-col font-sans">
             <Header />
 
-            <main className="flex-grow container mx-auto px-4 pt-32 pb-20">
-                <div className="grid md:grid-cols-3 gap-8">
-
-                    {/* Sidebar Profile */}
-                    <div className="space-y-6">
-                        <div className="bg-white p-8 rounded-2xl border border-gray-100 shadow-lg text-center relative overflow-hidden">
-                            <div className="absolute top-0 left-0 w-full h-2 bg-primary" />
-                            <div className="w-32 h-32 mx-auto bg-gray-100 rounded-full mb-6 flex items-center justify-center text-4xl text-gray-400 font-bold border-4 border-white shadow-md">
-                                SJ
-                            </div>
-                            <h1 className="text-2xl font-bold mb-1">Sarah Jenkins</h1>
-                            <p className="text-primary font-medium mb-4">Level 4 - Product Director</p>
-
-                            <div className="flex justify-center gap-2 mb-8">
-                                <span className="flex items-center gap-1 bg-yellow-50 text-yellow-700 px-3 py-1 rounded-full text-xs font-bold ring-1 ring-yellow-200">
-                                    <Star size={12} fill="currentColor" /> Top 5% Talent
-                                </span>
-                            </div>
-
-                            <div className="space-y-4 text-left border-t border-gray-100 pt-6">
-                                <div className="flex items-center gap-3 text-sm text-muted">
-                                    <Mail size={16} className="text-primary" /> sarah.j@12remotes.com
-                                </div>
-                                <div className="flex items-center gap-3 text-sm text-muted">
-                                    <Phone size={16} className="text-primary" /> +1 (555) 123-4567
-                                </div>
-                                <div className="flex items-center gap-3 text-sm text-muted">
-                                    <MapPin size={16} className="text-primary" /> London, UK (Remote)
-                                </div>
-                            </div>
-
-                            <button className="w-full bg-primary text-white py-3 rounded-lg font-bold hover:bg-red-800 transition-colors mt-8 shadow-lg shadow-red-900/10">
-                                Contact Sarah
-                            </button>
+            <main className="flex-grow pt-32 pb-20">
+                <div className="container mx-auto px-4">
+                    {/* Breadcrumbs & Actions */}
+                    <div className="flex flex-wrap items-center justify-between mb-8 gap-4">
+                        <div className="flex items-center gap-2 text-sm font-medium text-gray-500">
+                            <Link href="/talent" className="hover:text-primary transition-colors">Talent Pool</Link>
+                            <span>/</span>
+                            <span className="text-gray-900 font-bold">{talent.name}</span>
                         </div>
-
-                        {/* Level Justification Box */}
-                        <div className="bg-blue-50 p-6 rounded-2xl border border-blue-100">
-                            <h3 className="font-bold text-blue-900 mb-3 flex items-center gap-2">
-                                <Shield size={18} /> Why Level 4?
-                            </h3>
-                            <p className="text-sm text-blue-800 leading-relaxed mb-4">
-                                Sarah has demonstrated <strong>strategic leadership</strong> by scaling a product team from 5 to 50 members and managing a $2M budget.
-                            </p>
-                            <div className="text-xs font-semibold text-blue-700 uppercase tracking-wide mb-2">Verified Evidence</div>
-                            <ul className="space-y-2">
-                                <li>
-                                    <Link href="#" className="flex items-center gap-2 text-sm text-blue-600 hover:underline">
-                                        <LinkIcon size={14} /> Case Study: SaaS Scaling
-                                    </Link>
-                                </li>
-                                <li>
-                                    <Link href="#" className="flex items-center gap-2 text-sm text-blue-600 hover:underline">
-                                        <LinkIcon size={14} /> Award: Best PM 2024
-                                    </Link>
-                                </li>
-                            </ul>
+                        <div className="flex gap-3">
+                            <button className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-xl text-sm font-bold hover:border-primary hover:text-primary transition-all shadow-sm">
+                                <Share2 size={16} /> Share Profile
+                            </button>
+                            <button className="flex items-center gap-2 px-6 py-2 bg-primary text-white rounded-xl text-sm font-bold hover:bg-red-800 transition-all shadow-lg shadow-red-900/20 active:scale-95">
+                                <Mail size={16} /> Contact {talent.name.split(' ')[0]}
+                            </button>
                         </div>
                     </div>
 
-                    {/* Main Content */}
-                    <div className="md:col-span-2 space-y-8">
-
-                        {/* Experience Section */}
-                        <section className="bg-white p-8 rounded-2xl border border-gray-100 shadow-sm">
-                            <h2 className="text-2xl font-bold mb-6 flex items-center gap-3">
-                                <Briefcase className="text-primary" /> Experience
-                            </h2>
-                            <div className="space-y-8 relative before:absolute before:left-2 before:top-2 before:h-full before:w-0.5 before:bg-gray-100">
-                                <div className="relative pl-8">
-                                    <div className="absolute left-0 top-1.5 w-4 h-4 bg-primary rounded-full border-4 border-white shadow-sm" />
-                                    <h3 className="text-lg font-bold">Director of Product</h3>
-                                    <p className="text-primary font-medium">Global SaaS Corp • 2020 - Present</p>
-                                    <p className="text-muted mt-2 leading-relaxed">
-                                        Led the product strategy for the core enterprise platform. Managed 4 PMs and coordinated with engineering to deliver 99.9% uptime features.
-                                    </p>
+                    <div className="grid lg:grid-cols-3 gap-8">
+                        {/* Left Column: Profile Card */}
+                        <div className="lg:col-span-1 space-y-6">
+                            <div className="bg-white rounded-[2rem] border border-gray-100 p-8 shadow-xl shadow-gray-200/50 relative overflow-hidden">
+                                <div className="absolute top-0 right-0 p-6">
+                                    <div className="flex gap-2">
+                                        {talent.vetted && <Shield className="text-blue-500" size={24} />}
+                                        {talent.top5 && <Star className="text-amber-500 fill-amber-500" size={24} />}
+                                    </div>
                                 </div>
-                                <div className="relative pl-8">
-                                    <div className="absolute left-0 top-1.5 w-4 h-4 bg-gray-300 rounded-full border-4 border-white shadow-sm" />
-                                    <h3 className="text-lg font-bold">Senior Product Manager</h3>
-                                    <p className="text-primary font-medium">TechStart Inc • 2016 - 2020</p>
-                                    <p className="text-muted mt-2 leading-relaxed">
-                                        Launched main mobile app feature helping 1M+ users. Increased retention by 15%.
-                                    </p>
+
+                                <div className="flex flex-col items-center text-center">
+                                    <div className="w-40 h-40 bg-gray-50 rounded-3xl mb-6 overflow-hidden shadow-inner ring-4 ring-gray-50 ring-offset-0">
+                                        <img
+                                            src={talent.image || `https://avatar.vercel.sh/${talent.id}`}
+                                            alt={talent.name}
+                                            className="w-full h-full object-cover"
+                                        />
+                                    </div>
+                                    <h1 className="text-2xl font-extrabold mb-1">{talent.name}</h1>
+                                    <p className="text-primary font-bold uppercase tracking-tight text-sm mb-4">{talent.title || "Elite Talent"}</p>
+
+                                    <div className="flex items-center gap-4 text-gray-500 text-sm mb-8 font-medium">
+                                        <span className="flex items-center gap-1.5"><MapPin size={14} /> Remote</span>
+                                        <span className="flex items-center gap-1.5"><Globe size={14} /> Global</span>
+                                    </div>
+
+                                    <div className="w-full pt-8 border-t border-gray-50 space-y-4">
+                                        <div className="flex justify-between items-center text-sm">
+                                            <span className="text-gray-400 font-bold uppercase tracking-widest text-[10px]">Availability</span>
+                                            <span className="bg-green-50 text-green-700 px-3 py-1 rounded-lg font-bold">In 2 Weeks</span>
+                                        </div>
+                                        <div className="flex justify-between items-center text-sm">
+                                            <span className="text-gray-400 font-bold uppercase tracking-widest text-[10px]">Work Type</span>
+                                            <span className="text-gray-900 font-bold">Contract / Full-time</span>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                        </section>
 
-                        {/* Education Section */}
-                        <section className="bg-white p-8 rounded-2xl border border-gray-100 shadow-sm">
-                            <h2 className="text-2xl font-bold mb-6 flex items-center gap-3">
-                                <GraduationCap className="text-primary" /> Education
-                            </h2>
-                            <div className="grid sm:grid-cols-2 gap-4">
-                                <div className="p-4 bg-gray-50 rounded-xl">
-                                    <h3 className="font-bold">MBA, Technology Management</h3>
-                                    <p className="text-sm text-muted">Harvard Business School</p>
-                                    <p className="text-xs text-gray-400 mt-1">2016</p>
-                                </div>
-                                <div className="p-4 bg-gray-50 rounded-xl">
-                                    <h3 className="font-bold">BS, Computer Science</h3>
-                                    <p className="text-sm text-muted">University of London</p>
-                                    <p className="text-xs text-gray-400 mt-1">2012</p>
+                            <div className="bg-white rounded-[2rem] border border-gray-100 p-8 shadow-xl shadow-gray-200/50">
+                                <h3 className="text-lg font-bold mb-6 flex items-center gap-2">
+                                    <Zap size={20} className="text-primary" />
+                                    Core Expertise
+                                </h3>
+                                <div className="flex flex-wrap gap-2">
+                                    {talent.skills?.map((skill: string, idx: number) => (
+                                        <span key={`${skill}-${idx}`} className="bg-gray-50 text-gray-700 px-4 py-2 rounded-xl text-xs font-bold border border-gray-100">
+                                            {skill}
+                                        </span>
+                                    )) || (
+                                            ['Management', 'Product Architecture', 'Remote Leadership'].map((s, idx) => (
+                                                <span key={`${s}-${idx}`} className="bg-gray-50 text-gray-700 px-4 py-2 rounded-xl text-xs font-bold border border-gray-100">{s}</span>
+                                            ))
+                                        )}
                                 </div>
                             </div>
-                        </section>
+                        </div>
 
+                        {/* Right Column: Bio & Experience */}
+                        <div className="lg:col-span-2 space-y-8">
+                            <div className="bg-white rounded-[2rem] border border-gray-100 p-10 shadow-xl shadow-gray-200/50">
+                                <h2 className="text-2xl font-extrabold mb-6 flex items-center gap-3 text-gray-900">
+                                    <UserPlus className="text-primary" size={24} />
+                                    Professional Biography
+                                </h2>
+                                <p className="text-gray-600 leading-relaxed text-lg font-medium italic">
+                                    "{talent.bio || "Crafting the future of remote-first engineering teams and scalable architectures."}"
+                                </p>
+                            </div>
+
+                            <div className="bg-white rounded-[2rem] border border-gray-100 p-10 shadow-xl shadow-gray-200/50">
+                                <h2 className="text-2xl font-extrabold mb-10 flex items-center gap-3 text-gray-900">
+                                    <Award className="text-primary" size={24} />
+                                    Professional Roadmap
+                                </h2>
+
+                                <div className="space-y-12">
+                                    {talent.experience?.map((exp, idx: number) => (
+                                        <div key={idx} className="relative pl-8 before:absolute before:left-0 before:top-2 before:bottom-0 before:w-px before:bg-gray-100 last:before:hidden">
+                                            <div className="absolute left-[-4px] top-2 w-2 h-2 rounded-full bg-primary" />
+
+                                            <div className="flex flex-wrap items-center justify-between gap-2 mb-4">
+                                                <div>
+                                                    <h3 className="text-xl font-bold text-gray-900">{exp.role}</h3>
+                                                    <div className="flex items-center gap-2 text-primary font-bold text-sm">
+                                                        <Briefcase size={14} /> {exp.company}
+                                                    </div>
+                                                </div>
+                                                <div className="bg-gray-50 text-gray-500 px-4 py-1.5 rounded-lg text-xs font-extrabold tracking-widest border border-gray-100">
+                                                    <Calendar size={12} className="inline mr-1" /> {exp.period}
+                                                </div>
+                                            </div>
+
+                                            <p className="text-gray-500 font-medium leading-relaxed mb-6">
+                                                {exp.description}
+                                            </p>
+
+                                            {exp.campaigns && exp.campaigns.length > 0 && (
+                                                <div className="bg-primary/[0.03] rounded-2xl p-6 border border-primary/5">
+                                                    <h4 className="text-[10px] font-extrabold text-primary uppercase tracking-[0.2em] mb-4">Tactical Successes</h4>
+                                                    <div className="grid md:grid-cols-2 gap-4">
+                                                        {exp.campaigns.map((camp: string) => (
+                                                            <div key={camp} className="flex items-start gap-3">
+                                                                <CheckCircle2 size={16} className="text-primary mt-0.5 flex-shrink-0" />
+                                                                <span className="text-sm font-bold text-gray-700">{camp}</span>
+                                                            </div>
+                                                        ))}
+                                                    </div>
+                                                </div>
+                                            )}
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </main>
@@ -123,4 +166,26 @@ export default function TalentProfile({ params }: { params: { id: string } }) {
             <Footer />
         </div>
     );
+}
+
+function UserPlus(props: any) {
+    return (
+        <svg
+            {...props}
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+        >
+            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+            <circle cx="9" cy="7" r="4" />
+            <line x1="19" x2="19" y1="8" y2="14" />
+            <line x1="22" x2="16" y1="11" y2="11" />
+        </svg>
+    )
 }

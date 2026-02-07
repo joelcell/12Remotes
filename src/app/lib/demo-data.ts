@@ -99,70 +99,61 @@ function getRandomItem<T>(arr: T[]): T {
 }
 
 export function initializeDemoData() {
-    if (users.length > 0) return; // Already initialized
+    // Check if we already have enriched data (using Alex as a proxy)
+    const alex = users.find(u => u.id === 'talent_1');
+    if (alex && alex.experience && alex.experience.length > 0) return;
 
-    console.log("Initializing Rich Demo Data...");
+    console.log("Enriching Talent Profiles with Professional Data...");
 
-    // 1. Generate 20 Business Users
-    for (let i = 1; i <= 20; i++) {
-        const companyProfile = COMPANY_PROFILES[(i - 1) % COMPANY_PROFILES.length];
-        const companyName = `${companyProfile.name} ${i}`; // Unique-ish name
-        const businessId = `biz_${i}`;
+    const TALENT_TITLES = [
+        "Product Director", "Senior Marketing Manager", "Lead Frontend Engineer", "UX Research Lead",
+        "Operations Manager", "Data Science Architect", "Growth Lead", "Technical Program Manager",
+        "Brand Strategy Director", "DevOps Specialist", "Product Marketing Lead", "Cloud Solutions Architect"
+    ];
 
-        const business: User = {
-            id: businessId,
-            name: `Hiring Manager at ${companyName}`,
-            email: `business${i}@demo.com`,
-            password: 'password',
-            role: 'BUSINESS',
-            companyName: companyName,
-            image: `https://avatar.vercel.sh/${businessId}`
-        };
-        users.push(business);
+    const SKILLS_POOL = [
+        "React", "Node.js", "AWS", "Python", "Product Strategy", "Growth Hacking", "SEO/SEM",
+        "UX Design", "Agile", "Kubernetes", "Data Analytics", "Public Speaking", "Team Leadership"
+    ];
 
-        // Generate 1-2 Jobs
-        const jobCount = Math.floor(Math.random() * 2) + 1;
-        for (let j = 0; j < jobCount; j++) {
-            const isIT = Math.random() > 0.5;
-            const category = isIT ? 'IT' : 'Marketing';
-            const template = isIT ? getRandomItem(IT_TEMPLATES) : getRandomItem(MKT_TEMPLATES);
+    const SAMPLE_COMPANIES = ["Google", "Meta", "Grab", "Spotify", "Netflix", "Athelas", "Scale AI", "Vercel"];
 
-            const job: Job = {
-                id: jobs.length + 1,
-                title: template.title,
-                companyId: businessId,
-                companyName: companyName,
-                location: getRandomItem(LOCATIONS),
-                salary: `$${80 + Math.floor(Math.random() * 80)}k - $${160 + Math.floor(Math.random() * 60)}k`,
-                category: category as any,
-                description: template.description,
-                requirements: template.requirements,
-                responsibilities: template.responsibilities,
-                benefits: template.benefits,
-                bonus: template.bonus,
-                companyInfo: companyProfile.info,
-                status: 'Active',
-                applicantsCount: Math.floor(Math.random() * 50) + 5,
-                viewsCount: Math.floor(Math.random() * 500) + 100,
-                postedAt: new Date(Date.now() - Math.floor(Math.random() * 10 * 24 * 60 * 60 * 1000)) // Random date last 10 days
-            };
-            jobs.push(job);
+    // Update existing seeded talent users
+    users.forEach((user, i) => {
+        if (user.role === 'TALENT') {
+            const index = parseInt(user.id.split('_')[1]) || 1;
+            const title = TALENT_TITLES[index % TALENT_TITLES.length];
+
+            user.title = title;
+            user.vetted = Math.random() > 0.3;
+            user.top5 = Math.random() > 0.6;
+            user.bio = `Experienced specialist with a focus on ${title.toLowerCase()}. Passionate about building scalable remote teams and driving innovation in tech.`;
+
+            // Ensure unique skills
+            const uniqueSkills = new Set<string>();
+            while (uniqueSkills.size < 3) {
+                uniqueSkills.add(getRandomItem(SKILLS_POOL));
+            }
+            user.skills = Array.from(uniqueSkills);
+
+            user.experience = [
+                {
+                    company: getRandomItem(SAMPLE_COMPANIES),
+                    role: title,
+                    period: "2022 - Present",
+                    description: `Leading core initiatives and scaling remote operations at a fast-growing tech company. Involved in high-level architectural decisions and strategic planning.`,
+                    campaigns: ["Global Expansion 2023", "Product Rebrand", "AI Integration Drive"]
+                },
+                {
+                    company: getRandomItem(SAMPLE_COMPANIES),
+                    role: "Senior Associate",
+                    period: "2019 - 2022",
+                    description: `Managed cross-functional teams and delivered high-impact projects. Focused on user-centric design and performance optimization.`,
+                    campaigns: ["User Acquisition 2.0", "Internal Tools Optimization"]
+                }
+            ];
         }
-    }
+    });
 
-    // 2. Generate 20 Talent Users
-    for (let i = 1; i <= 20; i++) {
-        const talentId = `talent_${i}`;
-        const talent: User = {
-            id: talentId,
-            name: `Talent Candidate ${i}`,
-            email: `talent${i}@demo.com`,
-            password: 'password',
-            role: 'TALENT',
-            image: `https://avatar.vercel.sh/${talentId}`
-        };
-        users.push(talent);
-    }
-
-    console.log(`Generated ${users.length} users and ${jobs.length} jobs.`);
+    console.log(`Enriched ${users.filter(u => u.role === 'TALENT').length} talent profiles.`);
 }

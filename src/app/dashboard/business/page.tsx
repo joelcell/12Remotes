@@ -1,6 +1,6 @@
 import { auth, signOut } from "@/auth";
-import { getJobs } from "@/app/lib/store";
-import { LayoutDashboard, Users, Briefcase, Settings, PlusCircle, Search, MoreHorizontal, Eye, FileText, DollarSign, CheckCircle } from "lucide-react";
+import { getJobs, Job } from "@/app/lib/store";
+import { LayoutDashboard, Users, Briefcase, Settings, PlusCircle, Search, MoreHorizontal, Eye, FileText, UserPlus } from "lucide-react";
 import Link from "next/link";
 
 export default async function BusinessDashboard() {
@@ -14,7 +14,7 @@ export default async function BusinessDashboard() {
     // For specific demo user 'business1@demo.com', their id is 'biz_1'.
 
     // Simple filter: if user email is businessX@demo.com, we strip 'business' and get ID.
-    let userJobs: any[] = [];
+    let userJobs: Job[] = [];
     if (session?.user?.email) {
         // Find our internal ID if possible, but session id might be different if we didn't persist perfectly.
         // Let's rely on the store's findUserByEmail if we could, but this is a server component.
@@ -164,7 +164,7 @@ export default async function BusinessDashboard() {
     );
 }
 
-function StatCard({ icon, label, value, trend }: any) {
+function StatCard({ icon, label, value, trend }: { icon: React.ReactNode, label: string, value: string | number, trend: string }) {
     return (
         <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm flex items-start justify-between">
             <div>
@@ -179,7 +179,7 @@ function StatCard({ icon, label, value, trend }: any) {
     );
 }
 
-function NavItem({ icon, label, active, badge, href = "#" }: any) {
+function NavItem({ icon, label, active, badge, href = "#" }: { icon: React.ReactNode, label: string, active?: boolean, badge?: number, href?: string }) {
     return (
         <Link href={href} className={clsx(
             "flex items-center justify-between px-3 py-2.5 rounded-lg text-sm font-medium transition-colors mb-1",
@@ -197,6 +197,6 @@ function NavItem({ icon, label, active, badge, href = "#" }: any) {
     )
 }
 
-function clsx(...classes: any[]) {
+function clsx(...classes: (string | boolean | undefined)[]) {
     return classes.filter(Boolean).join(' ');
 }

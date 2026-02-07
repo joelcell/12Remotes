@@ -2,7 +2,7 @@
 "use client";
 
 import { useState } from "react";
-import { DollarSign, ArrowRightLeft } from "lucide-react";
+import { ArrowRightLeft } from "lucide-react";
 
 const RATES: Record<string, number> = {
     VND: 25450,

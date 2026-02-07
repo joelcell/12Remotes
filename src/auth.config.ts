@@ -6,15 +6,15 @@ export const authConfig = {
     },
     providers: [], // Providers defined here must be edge compatible. Credentials is fine but often we merge it in auth.ts
     callbacks: {
-        async jwt({ token, user, trigger, session }) {
+        async jwt({ token, user }) {
             if (user) {
-                token.role = (user as any).role
+                token.role = (user as { role?: string }).role
             }
             return token
         },
         async session({ session, token }) {
             if (session?.user) {
-                (session.user as any).role = token.role
+                (session.user as { role?: string }).role = token.role as string
             }
             return session
         },
@@ -22,7 +22,7 @@ export const authConfig = {
             const isLoggedIn = !!auth?.user
             const isOnDashboard = nextUrl.pathname.startsWith('/dashboard')
             const isOnLogin = nextUrl.pathname.startsWith('/login')
-            const userRole = (auth?.user as any)?.role
+            const userRole = (auth?.user as { role?: string } | undefined)?.role
 
             if (isOnDashboard) {
                 if (!isLoggedIn) return false // Redirect unauthenticated users to login page

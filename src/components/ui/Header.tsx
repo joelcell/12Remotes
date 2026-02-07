@@ -3,7 +3,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { Menu, X, Globe, Briefcase, Users, LayoutDashboard, UserPlus } from "lucide-react";
+import { Menu, X, Briefcase, Users, LayoutDashboard, UserPlus } from "lucide-react";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
 
@@ -39,7 +39,7 @@ export default function Header() {
                         Talent Pool
                     </Link>
                     {session?.user ? (
-                        <Link href={(session.user as any).role === 'BUSINESS' ? "/dashboard/business" : "/dashboard/talent"}>
+                        <Link href={(session.user as { role?: string }).role === 'BUSINESS' ? "/dashboard/business" : "/dashboard/talent"}>
                             <button className="bg-primary text-white px-5 py-2.5 rounded-xl hover:bg-red-800 transition-all flex items-center gap-2 font-bold shadow-xl shadow-red-900/20 active:scale-95">
                                 <LayoutDashboard size={18} />
                                 Dashboard
@@ -73,7 +73,7 @@ export default function Header() {
                     <Link href="/marketplace" className="block text-foreground hover:text-primary py-3 font-medium text-lg">Find Work</Link>
                     <Link href="/talent" className="block text-foreground hover:text-primary py-3 font-medium text-lg">Talent Pool</Link>
                     {session?.user ? (
-                        <Link href={session.user.email?.includes('business') || (session.user as any).role === 'BUSINESS' ? "/dashboard/business" : "/dashboard/talent"} className="block">
+                        <Link href={((session.user as { role?: string }).role === 'BUSINESS') ? "/dashboard/business" : "/dashboard/talent"} className="block">
                             <button className="bg-primary text-white w-full py-3 rounded-lg font-semibold flex items-center justify-center gap-2">
                                 <LayoutDashboard size={18} /> Dashboard
                             </button>

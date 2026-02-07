@@ -65,7 +65,7 @@ export async function register(prevState: string | undefined, formData: FormData
     redirect('/login?registered=true');
 }
 
-export async function createJob(prevState: any, formData: FormData) {
+export async function createJob(prevState: unknown, formData: FormData) {
     const session = await auth();
     if (!session?.user?.email) {
         return 'Unauthorized';
@@ -77,10 +77,10 @@ export async function createJob(prevState: any, formData: FormData) {
 
     const emailMatch = session.user.email.match(/business(\d+)@demo.com/);
     const bizId = emailMatch ? `biz_${emailMatch[1]}` : 'biz_custom';
-    const bizName = (session.user as any).companyName || `Company of ${session.user.name}`;
+    const bizName = (session.user as { companyName?: string; name?: string }).companyName || `Company of ${session.user.name}`;
 
     const title = formData.get('title') as string;
-    const category = formData.get('category') as any;
+    const category = formData.get('category') as 'Engineering' | 'Product' | 'Marketing' | 'Operations' | 'IT' | 'Sales' | 'Design';
     const location = formData.get('location') as string;
     const salary = formData.get('salary') as string;
     const bonus = formData.get('bonus') as string;

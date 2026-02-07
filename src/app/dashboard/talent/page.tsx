@@ -139,7 +139,7 @@ export default async function TalentDashboard() {
     );
 }
 
-function StatCard({ icon, label, value, trend }: any) {
+function StatCard({ icon, label, value, trend }: { icon: React.ReactNode, label: string, value: string | number, trend: string }) {
     return (
         <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm flex items-start justify-between hover:border-primary/20 transition-all">
             <div>
@@ -154,7 +154,7 @@ function StatCard({ icon, label, value, trend }: any) {
     );
 }
 
-function NavItem({ icon, label, active, badge, href = "#" }: any) {
+function NavItem({ icon, label, active, badge, href = "#" }: { icon: React.ReactNode, label: string, active?: boolean, badge?: number, href?: string }) {
     return (
         <Link href={href} className={clsx(
             "flex items-center justify-between px-4 py-3 rounded-xl text-sm font-bold transition-all mb-1",
@@ -176,6 +176,6 @@ function NavItem({ icon, label, active, badge, href = "#" }: any) {
     );
 }
 
-function clsx(...classes: any[]) {
+function clsx(...classes: (string | boolean | undefined)[]) {
     return classes.filter(Boolean).join(' ');
 }

@@ -1,12 +1,27 @@
 
+export interface Experience {
+    company: string;
+    role: string;
+    period: string;
+    description: string;
+    campaigns?: string[];
+}
+
 export interface User {
     id: string;
     email: string;
-    password?: string; // In real app, this should be hashed. Here plain text for demo or simple hash.
+    password?: string;
     name: string;
     role: 'BUSINESS' | 'TALENT';
     image?: string;
     companyName?: string; // For business
+    // Talent specific fields
+    title?: string;
+    bio?: string;
+    vetted?: boolean;
+    top5?: boolean;
+    skills?: string[];
+    experience?: Experience[];
 }
 
 export interface Job {
@@ -64,4 +79,12 @@ export function getJobs() {
 
 export function getJobById(id: number) {
     return jobs.find(j => j.id === id);
+}
+
+export function getTalents() {
+    return users.filter(u => u.role === 'TALENT');
+}
+
+export function getTalentById(id: string) {
+    return users.find(u => u.id === id && u.role === 'TALENT');
 }

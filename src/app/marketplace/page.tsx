@@ -184,7 +184,7 @@ export default function Marketplace() {
     );
 }
 
-function JobCard({ job, onApply }: { job: any, onApply: () => void }) {
+function JobCard({ job, onApply }: { job: Job, onApply: () => void }) {
     // Parse rough salary for demo (taking lower bound)
     const baseSalary = parseInt(job.salary.replace(/[^0-9]/g, '').slice(0, 3)) * 1000;
 

@@ -1,5 +1,5 @@
 
-import { Users, Code, Megaphone, Shield, PenTool, Database } from "lucide-react";
+import { Users, Code, Megaphone, PenTool } from "lucide-react";
 
 const CATEGORIES = [
     {
