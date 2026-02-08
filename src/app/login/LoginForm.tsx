@@ -6,11 +6,17 @@ import { useFormStatus } from 'react-dom';
 import { Briefcase, User, Mail, Lock, ArrowRight } from 'lucide-react';
 import { useSearchParams } from 'next/navigation';
 
+// ... imports
+
 export default function LoginForm() {
     const searchParams = useSearchParams();
     const [errorMessage, dispatch] = useActionState(authenticate, undefined);
     const initialRole = (searchParams.get('role') as 'BUSINESS' | 'TALENT') || 'BUSINESS';
     const [role, setRole] = useState<'BUSINESS' | 'TALENT'>(initialRole);
+
+    // Auto-fill states
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
 
     useEffect(() => {
         const urlRole = searchParams.get('role') as 'BUSINESS' | 'TALENT';
@@ -18,6 +24,17 @@ export default function LoginForm() {
             setRole(urlRole);
         }
     }, [searchParams]);
+
+    const handleDemoLogin = (type: 'BUSINESS' | 'TALENT') => {
+        setRole(type);
+        if (type === 'BUSINESS') {
+            setEmail('business1@demo.com');
+            setPassword('password123');
+        } else {
+            setEmail('talent1@demo.com');
+            setPassword('password123');
+        }
+    };
 
     const isRegistered = searchParams.get('registered') === 'true';
 
@@ -31,6 +48,28 @@ export default function LoginForm() {
                     <p className="text-sm font-bold text-green-700">Đăng ký thành công! Hãy đăng nhập ngay.</p>
                 </div>
             )}
+
+            {/* Quick Login - Demo Helper */}
+            <div className="bg-blue-50/50 p-4 rounded-2xl border border-blue-100 mb-6">
+                <p className="text-xs font-bold text-blue-600 uppercase tracking-widest mb-3 text-center">Dùng thử ngay (Demo)</p>
+                <div className="flex gap-3">
+                    <button
+                        type="button"
+                        onClick={() => handleDemoLogin('BUSINESS')}
+                        className="flex-1 bg-white border border-blue-200 text-blue-700 py-2 rounded-xl text-xs font-bold hover:bg-blue-50 transition-colors shadow-sm"
+                    >
+                        Demo Doanh nghiệp
+                    </button>
+                    <button
+                        type="button"
+                        onClick={() => handleDemoLogin('TALENT')}
+                        className="flex-1 bg-white border border-blue-200 text-blue-700 py-2 rounded-xl text-xs font-bold hover:bg-blue-50 transition-colors shadow-sm"
+                    >
+                        Demo Ứng viên
+                    </button>
+                </div>
+            </div>
+
             {/* Role Toggle - Modernized */}
             <div className="bg-gray-50 p-1.5 rounded-2xl border border-gray-100 flex items-center mb-8 relative shadow-inner">
                 <button
@@ -72,6 +111,8 @@ export default function LoginForm() {
                             name="email"
                             placeholder="m@example.com"
                             required
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
                         />
                     </div>
                 </div>
@@ -88,6 +129,8 @@ export default function LoginForm() {
                             name="password"
                             minLength={6}
                             required
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
                         />
                     </div>
                 </div>
