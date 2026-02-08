@@ -1,14 +1,24 @@
 'use client';
 
 import { register } from '@/app/lib/actions';
-import { useActionState, useState } from 'react';
+import { useActionState, useState, useEffect } from 'react';
 import { useFormStatus } from 'react-dom';
 import { Briefcase, User, Mail, Lock, ArrowRight, UserPlus } from 'lucide-react';
 import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
 
 export default function RegisterForm() {
+    const searchParams = useSearchParams();
     const [errorMessage, dispatch] = useActionState(register, undefined);
-    const [role, setRole] = useState<'BUSINESS' | 'TALENT'>('TALENT');
+    const initialRole = (searchParams.get('role') as 'BUSINESS' | 'TALENT') || 'TALENT';
+    const [role, setRole] = useState<'BUSINESS' | 'TALENT'>(initialRole);
+
+    useEffect(() => {
+        const urlRole = searchParams.get('role') as 'BUSINESS' | 'TALENT';
+        if (urlRole && (urlRole === 'BUSINESS' || urlRole === 'TALENT')) {
+            setRole(urlRole);
+        }
+    }, [searchParams]);
 
     return (
         <form action={dispatch} className="space-y-6">

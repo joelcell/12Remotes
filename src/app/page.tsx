@@ -46,12 +46,12 @@ export default function Home() {
           </p>
 
           <div className="animate-slide-up [animation-delay:600ms] flex flex-col sm:flex-row items-center justify-center gap-5 pt-8">
-            <Link href="/login?role=BUSINESS" className="group bg-primary text-white text-lg px-10 py-5 rounded-full font-bold transition-all hover:bg-red-800 hover:shadow-2xl hover:shadow-red-900/30 hover:-translate-y-1 flex items-center gap-3">
-              Start Hiring
+            <Link href="/register?role=BUSINESS" className="group bg-primary text-white text-lg px-10 py-5 rounded-full font-bold transition-all hover:bg-red-800 hover:shadow-2xl hover:shadow-red-900/30 hover:-translate-y-1 flex items-center gap-3">
+              Doanh Nghiệp (Tuyển dụng)
               <ArrowRight className="group-hover:translate-x-1 transition-transform" />
             </Link>
-            <Link href="/marketplace" className="group bg-white border-2 border-primary text-primary text-lg px-10 py-5 rounded-full font-bold transition-all hover:bg-red-50 hover:shadow-2xl hover:shadow-red-900/5 hover:-translate-y-1 flex items-center gap-3">
-              Find Remote Jobs
+            <Link href="/register?role=TALENT" className="group bg-white border-2 border-primary text-primary text-lg px-10 py-5 rounded-full font-bold transition-all hover:bg-red-50 hover:shadow-2xl hover:shadow-red-900/5 hover:-translate-y-1 flex items-center gap-3">
+              Ứng Viên (Tìm việc)
               <Briefcase className="group-hover:scale-110 transition-transform" size={20} />
             </Link>
           </div>
