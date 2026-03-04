@@ -88,8 +88,8 @@ export default async function BusinessDashboard() {
                 {/* Stats Grid */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
                     <StatCard icon={<Briefcase className="text-primary" />} label="Active Jobs" value={userJobs.length} trend="+2 this week" />
-                    <StatCard icon={<Users className="text-blue-600" />} label="Total Applicants" value={userJobs.reduce((acc, job) => acc + (job.applicantsCount || 0), 0)} trend="+15% vs last month" />
-                    <StatCard icon={<Eye className="text-green-600" />} label="Total Views" value={userJobs.reduce((acc, job) => acc + (job.viewsCount || 0), 0)} trend="+85 today" />
+                    <StatCard icon={<Users className="text-blue-600" />} label="Total Applicants" value={userJobs.reduce((acc: number, job: Job) => acc + (job.applicantsCount || 0), 0)} trend="+15% vs last month" />
+                    <StatCard icon={<Eye className="text-green-600" />} label="Total Views" value={userJobs.reduce((acc: number, job: Job) => acc + (job.viewsCount || 0), 0)} trend="+85 today" />
                 </div>
 
                 {/* Job List Table */}
