@@ -1,5 +1,6 @@
 
 import RegisterForm from './RegisterForm';
+import { Suspense } from 'react';
 import { UserPlus } from 'lucide-react';
 import Link from 'next/link';
 
@@ -19,7 +20,9 @@ export default function RegisterPage() {
                 <h1 className="mb-2 text-4xl font-extrabold text-center text-gray-900 tracking-tight">Gia nhập đội ngũ</h1>
                 <p className="text-gray-400 text-center mb-10 font-bold uppercase tracking-widest text-xs">Khởi đầu hành trình remote của bạn</p>
 
-                <RegisterForm />
+                <Suspense fallback={<div className="h-64 flex items-center justify-center text-gray-400 font-bold animate-pulse">Đang tải biểu mẫu...</div>}>
+                    <RegisterForm />
+                </Suspense>
 
                 <p className="mt-10 text-center text-gray-400 text-sm font-medium">
                     Đã có tài khoản? <Link href="/login" className="text-primary font-bold cursor-pointer hover:underline underline-offset-4 transition-all">Đăng nhập tại đây</Link>
