@@ -1,34 +1,28 @@
-import { auth, signOut } from "@/auth";
-import { getJobs, Job } from "@/app/lib/store";
-import { LayoutDashboard, Users, Briefcase, Settings, PlusCircle, Search, MoreHorizontal, Eye, FileText, UserPlus } from "lucide-react";
+'use client';
+
+import React, { useEffect, useState } from "react";
+import { Job } from "@/app/lib/store";
+import { LayoutDashboard, Users, Briefcase, Settings, PlusCircle, Search, MoreHorizontal, Eye, FileText } from "lucide-react";
 import Link from "next/link";
+import { useLanguage } from "@/context/LanguageContext";
+import { getBusinessJobs } from "@/app/lib/business-actions";
+import { signOut } from "next-auth/react";
 
-export default async function BusinessDashboard() {
-    const session = await auth();
-    const allJobs = getJobs();
-    // Filter jobs for this business user (by email or id lookup in real app, here checking logic)
-    // In store we saved companyId as 'biz_i'. 
-    // We need to match the logged in user to the jobs.
-    // Since we don't have a direct 'my jobs' query yet, let's filter by matching partial company name or just show all for demo if user ID doesn't match perfectly.
-    // Actually, let's fetch based on email mapping if possible.
-    // For specific demo user 'business1@demo.com', their id is 'biz_1'.
+export default function BusinessDashboard() {
+    const { t } = useLanguage();
+    const [userJobs, setUserJobs] = useState<Job[]>([]);
+    const [session, setSession] = useState<any>(null);
+    const [isLoading, setIsLoading] = useState(true);
 
-    // Simple filter: if user email is businessX@demo.com, we strip 'business' and get ID.
-    let userJobs: Job[] = [];
-    if (session?.user?.email) {
-        // Find our internal ID if possible, but session id might be different if we didn't persist perfectly.
-        // Let's rely on the store's findUserByEmail if we could, but this is a server component.
-        // For the sake of the demo visual, let's filter where companyName includes "Demo Company" if we can't match exactly, 
-        // OR better: Just show a subset of jobs to simulate "My Jobs"
-        userJobs = allJobs.slice(0, 5); // Just show first 5 for design demo if we can't match exact.
+    useEffect(() => {
+        getBusinessJobs().then(data => {
+            setUserJobs(data.userJobs);
+            setSession(data.session);
+            setIsLoading(false);
+        });
+    }, []);
 
-        // Try to match exact if using the demo logic
-        const emailMatch = session.user.email.match(/business(\d+)@demo.com/);
-        if (emailMatch) {
-            const bizId = `biz_${emailMatch[1]}`;
-            userJobs = allJobs.filter(j => j.companyId === bizId);
-        }
-    }
+    if (isLoading) return <div className="min-h-screen flex items-center justify-center font-bold text-primary animate-pulse">{t('common.loading')}</div>;
 
     return (
         <div className="min-h-screen bg-gray-50 flex">
@@ -39,15 +33,15 @@ export default async function BusinessDashboard() {
                         <LayoutDashboard className="fill-current" />
                         12Remotes
                     </h2>
-                    <p className="text-xs text-muted mt-1 uppercase tracking-wider font-semibold">Business Console</p>
+                    <p className="text-xs text-muted mt-1 uppercase tracking-wider font-semibold">{t('dashboard_business.title')}</p>
                 </div>
 
                 <nav className="flex-1 px-4 space-y-1">
-                    <NavItem icon={<LayoutDashboard size={20} />} label="Overview" active href="/dashboard/business" />
-                    <NavItem icon={<Briefcase size={20} />} label="My Jobs" badge={userJobs.length} />
-                    <NavItem icon={<Users size={20} />} label="Candidates" badge={12} />
-                    <NavItem icon={<FileText size={20} />} label="Billing" />
-                    <NavItem icon={<Settings size={20} />} label="Settings" href="/dashboard/business/settings" />
+                    <NavItem icon={<LayoutDashboard size={20} />} label={t('dashboard_business.overview')} active href="/dashboard/business" />
+                    <NavItem icon={<Briefcase size={20} />} label={t('dashboard_business.myJobs')} badge={userJobs.length} />
+                    <NavItem icon={<Users size={20} />} label={t('dashboard_business.candidates')} badge={12} />
+                    <NavItem icon={<FileText size={20} />} label={t('dashboard_business.billing')} />
+                    <NavItem icon={<Settings size={20} />} label={t('common.settings')} href="/dashboard/business/settings" />
                 </nav>
 
                 <div className="p-4 border-t border-gray-100">
@@ -58,16 +52,12 @@ export default async function BusinessDashboard() {
                             <p className="text-xs text-gray-500 truncate w-32">{session?.user?.email}</p>
                         </div>
                     </div>
-                    <form
-                        action={async () => {
-                            'use server';
-                            await signOut();
-                        }}
+                    <button
+                        onClick={() => signOut()}
+                        className="w-full text-sm font-medium text-red-600 hover:bg-red-50 py-2 rounded-lg transition-colors"
                     >
-                        <button className="w-full text-sm font-medium text-red-600 hover:bg-red-50 py-2 rounded-lg transition-colors">
-                            Sign Out
-                        </button>
-                    </form>
+                        {t('common.signOut')}
+                    </button>
                 </div>
             </aside>
 
@@ -76,29 +66,29 @@ export default async function BusinessDashboard() {
                 {/* Header */}
                 <div className="flex justify-between items-center mb-8">
                     <div>
-                        <h1 className="text-2xl font-bold text-gray-900">Dashboard Overview</h1>
+                        <h1 className="text-2xl font-bold text-gray-900">{t('dashboard_business.overview')}</h1>
                         <p className="text-gray-500">Welcome back, here's what's happening with your jobs.</p>
                     </div>
                     <Link href="/dashboard/business/post-job" className="bg-primary text-white px-4 py-2 rounded-lg font-medium hover:bg-red-800 transition-colors flex items-center gap-2 shadow-lg shadow-red-900/10">
                         <PlusCircle size={18} />
-                        Post New Job
+                        {t('dashboard_business.postNewJob')}
                     </Link>
                 </div>
 
                 {/* Stats Grid */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                    <StatCard icon={<Briefcase className="text-primary" />} label="Active Jobs" value={userJobs.length} trend="+2 this week" />
-                    <StatCard icon={<Users className="text-blue-600" />} label="Total Applicants" value={userJobs.reduce((acc: number, job: Job) => acc + (job.applicantsCount || 0), 0)} trend="+15% vs last month" />
-                    <StatCard icon={<Eye className="text-green-600" />} label="Total Views" value={userJobs.reduce((acc: number, job: Job) => acc + (job.viewsCount || 0), 0)} trend="+85 today" />
+                    <StatCard icon={<Briefcase className="text-primary" />} label={t('dashboard_business.activeJobs')} value={userJobs.length} trend="+2 this week" />
+                    <StatCard icon={<Users className="text-blue-600" />} label={t('dashboard_business.totalApplicants')} value={userJobs.reduce((acc, job) => acc + (job.applicantsCount || 0), 0)} trend="+15% vs last month" />
+                    <StatCard icon={<Eye className="text-green-600" />} label={t('dashboard_business.totalViews')} value={userJobs.reduce((acc, job) => acc + (job.viewsCount || 0), 0)} trend="+85 today" />
                 </div>
 
                 {/* Job List Table */}
                 <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
                     <div className="p-6 border-b border-gray-100 flex justify-between items-center">
-                        <h3 className="font-bold text-lg text-gray-900">Recent Job Postings</h3>
+                        <h3 className="font-bold text-lg text-gray-900">{t('dashboard_business.recentPostings')}</h3>
                         <div className="relative">
                             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
-                            <input type="text" placeholder="Search jobs..." className="pl-9 pr-4 py-2 border border-gray-200 rounded-lg text-sm focus:border-primary outline-none w-64" />
+                            <input type="text" placeholder={t('common.search') + "..."} className="pl-9 pr-4 py-2 border border-gray-200 rounded-lg text-sm focus:border-primary outline-none w-64" />
                         </div>
                     </div>
                     <div className="overflow-x-auto">
@@ -133,7 +123,7 @@ export default async function BusinessDashboard() {
                                                 {[1, 2, 3].map(i => (
                                                     <img key={i} className="w-8 h-8 rounded-full border-2 border-white" src={`https://avatar.vercel.sh/${job.id}-${i}`} alt="" />
                                                 ))}
-                                                <div className="w-8 h-8 rounded-full border-2 border-white bg-gray-100 flex items-center justify-center text-xs font-bold text-gray-500">+{job.applicantsCount - 3}</div>
+                                                <div className="w-8 h-8 rounded-full border-2 border-white bg-gray-100 flex items-center justify-center text-xs font-bold text-gray-500">+{job.applicantsCount > 3 ? job.applicantsCount - 3 : 0}</div>
                                             </div>
                                         </td>
                                         <td className="px-6 py-4">
@@ -151,7 +141,7 @@ export default async function BusinessDashboard() {
                                 )) : (
                                     <tr>
                                         <td colSpan={6} className="px-6 py-12 text-center text-gray-500">
-                                            No jobs found. Post your first job!
+                                            No jobs found.
                                         </td>
                                     </tr>
                                 )}
@@ -180,6 +170,7 @@ function StatCard({ icon, label, value, trend }: { icon: React.ReactNode, label:
 }
 
 function NavItem({ icon, label, active, badge, href = "#" }: { icon: React.ReactNode, label: string, active?: boolean, badge?: number, href?: string }) {
+    const clsx = (...classes: any[]) => classes.filter(Boolean).join(' ');
     return (
         <Link href={href} className={clsx(
             "flex items-center justify-between px-3 py-2.5 rounded-lg text-sm font-medium transition-colors mb-1",
@@ -195,8 +186,4 @@ function NavItem({ icon, label, active, badge, href = "#" }: { icon: React.React
             )}>{badge}</span>}
         </Link>
     )
-}
-
-function clsx(...classes: (string | boolean | undefined)[]) {
-    return classes.filter(Boolean).join(' ');
 }

@@ -12,8 +12,10 @@ import clsx from "clsx";
 import { fetchJobs } from "@/app/lib/data";
 import { useEffect } from "react";
 import { Job } from "@/app/lib/store";
+import { useLanguage } from "@/context/LanguageContext";
 
 export default function Marketplace() {
+    const { t } = useLanguage();
     const [jobs, setJobs] = useState<Job[]>([]);
     const [loading, setLoading] = useState(true);
     const [search, setSearch] = useState("");
@@ -103,7 +105,7 @@ export default function Marketplace() {
                         <div className="bg-white p-6 rounded-xl border border-gray-100 shadow-sm sticky top-24">
                             <div className="flex items-center gap-2 mb-4 text-primary font-bold">
                                 <Filter size={20} />
-                                Filters
+                                {t('marketplace.filters') || 'Bộ lọc'}
                             </div>
                             <div className="space-y-4">
                                 <div>
@@ -125,7 +127,7 @@ export default function Marketplace() {
                                             className="text-xs text-primary font-semibold mt-2 hover:underline"
                                             onClick={() => { setSelectedCategory(null); setPreferences({ role: "", location: "" }); }}
                                         >
-                                            Clear Filters
+                                            {t('marketplace.clearFilters') || 'Xóa bộ lọc'}
                                         </button>
                                     </div>
                                 </div>
@@ -142,12 +144,12 @@ export default function Marketplace() {
                                     type="text"
                                     value={search}
                                     onChange={(e) => setSearch(e.target.value)}
-                                    placeholder="Search for management roles..."
+                                    placeholder={t('marketplace.searchPlaceholder') || 'Tìm kiếm vị trí quản lý...'}
                                     className="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all shadow-sm"
                                 />
                             </div>
                             <button className="bg-primary text-white px-6 py-3 rounded-xl font-semibold hover:bg-red-800 transition-colors shadow-lg shadow-red-900/10">
-                                Search
+                                {t('common.search')}
                             </button>
                         </div>
 
@@ -160,7 +162,7 @@ export default function Marketplace() {
 
                         <div className="grid gap-4">
                             {loading ? (
-                                <p className="text-center text-muted">Loading jobs...</p>
+                                <p className="text-center text-muted">{t('common.loading')}</p>
                             ) : filteredJobs.length > 0 ? filteredJobs.map((job) => (
                                 <JobCard key={job.id} job={job} onApply={() => handleApply(job.id)} />
                             )) : (

@@ -6,10 +6,12 @@ import { useState } from "react";
 import { Menu, X, Briefcase, Users, LayoutDashboard, UserPlus } from "lucide-react";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
+import { useLanguage } from "@/context/LanguageContext";
 
 export default function Header() {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const { data: session } = useSession();
+    const { t } = useLanguage();
 
     return (
         <header className="fixed top-0 left-0 right-0 z-50 glass-panel border-b border-red-900/10 bg-white/85 backdrop-blur-md">
@@ -32,26 +34,26 @@ export default function Header() {
                 <nav className="hidden md:flex items-center gap-8">
                     <Link href="/marketplace" className="text-foreground/80 hover:text-primary transition-colors flex items-center gap-2 font-medium">
                         <Briefcase size={18} />
-                        Find Work
+                        {t('nav.findJobs')}
                     </Link>
                     <Link href="/talent" className="text-foreground/80 hover:text-primary transition-colors flex items-center gap-2 font-medium">
                         <Users size={18} />
-                        Talent Pool
+                        {t('nav.forTalent')}
                     </Link>
                     {session?.user ? (
                         <Link href={(session.user as { role?: string }).role === 'BUSINESS' ? "/dashboard/business" : "/dashboard/talent"}>
                             <button className="bg-primary text-white px-5 py-2.5 rounded-xl hover:bg-red-800 transition-all flex items-center gap-2 font-bold shadow-xl shadow-red-900/20 active:scale-95">
                                 <LayoutDashboard size={18} />
-                                Dashboard
+                                {t('common.dashboard')}
                             </button>
                         </Link>
                     ) : (
                         <div className="flex items-center gap-4">
-                            <Link href="/login" className="text-gray-600 hover:text-primary font-bold transition-all">Log in</Link>
+                            <Link href="/login" className="text-gray-600 hover:text-primary font-bold transition-all">{t('auth.login')}</Link>
                             <Link href="/register">
                                 <button className="bg-primary text-white px-6 py-2.5 rounded-xl hover:bg-red-800 transition-all flex items-center gap-2 font-bold shadow-xl shadow-red-900/20 active:scale-95">
                                     <UserPlus size={18} />
-                                    Sign Up
+                                    {t('auth.register')}
                                 </button>
                             </Link>
                         </div>
@@ -70,17 +72,17 @@ export default function Header() {
             {/* Mobile Nav */}
             {isMenuOpen && (
                 <div className="md:hidden glass-panel border-t border-red-900/10 p-4 space-y-4 bg-white/95">
-                    <Link href="/marketplace" className="block text-foreground hover:text-primary py-3 font-medium text-lg">Find Work</Link>
-                    <Link href="/talent" className="block text-foreground hover:text-primary py-3 font-medium text-lg">Talent Pool</Link>
+                    <Link href="/marketplace" className="block text-foreground hover:text-primary py-3 font-medium text-lg">{t('nav.findJobs')}</Link>
+                    <Link href="/talent" className="block text-foreground hover:text-primary py-3 font-medium text-lg">{t('nav.forTalent')}</Link>
                     {session?.user ? (
                         <Link href={((session.user as { role?: string }).role === 'BUSINESS') ? "/dashboard/business" : "/dashboard/talent"} className="block">
                             <button className="bg-primary text-white w-full py-3 rounded-lg font-semibold flex items-center justify-center gap-2">
-                                <LayoutDashboard size={18} /> Dashboard
+                                <LayoutDashboard size={18} /> {t('common.dashboard')}
                             </button>
                         </Link>
                     ) : (
                         <Link href="/login" className="block">
-                            <button className="bg-primary text-white w-full py-3 rounded-lg font-semibold">Global Login</button>
+                            <button className="bg-primary text-white w-full py-3 rounded-lg font-semibold">{t('auth.login')}</button>
                         </Link>
                     )}
                 </div>

@@ -5,10 +5,13 @@ import { useActionState, useState, useEffect } from 'react';
 import { useFormStatus } from 'react-dom';
 import { Briefcase, User, Mail, Lock, ArrowRight } from 'lucide-react';
 import { useSearchParams } from 'next/navigation';
+import { useLanguage } from '@/context/LanguageContext';
+import clsx from 'clsx';
 
 // ... imports
 
 export default function LoginForm() {
+    const { t } = useLanguage();
     const searchParams = useSearchParams();
     const [errorMessage, dispatch] = useActionState(authenticate, undefined);
     const initialRole = (searchParams.get('role') as 'BUSINESS' | 'TALENT') || 'BUSINESS';
@@ -45,27 +48,27 @@ export default function LoginForm() {
                     <div className="bg-green-500 text-white p-1 rounded-full">
                         <ArrowRight size={14} className="rotate-[-45deg]" />
                     </div>
-                    <p className="text-sm font-bold text-green-700">Đăng ký thành công! Hãy đăng nhập ngay.</p>
+                    <p className="text-sm font-bold text-green-700">{t('auth.loginSuccess')}</p>
                 </div>
             )}
 
             {/* Quick Login - Demo Helper */}
             <div className="bg-blue-50/50 p-4 rounded-2xl border border-blue-100 mb-6">
-                <p className="text-xs font-bold text-blue-600 uppercase tracking-widest mb-3 text-center">Dùng thử ngay (Demo)</p>
+                <p className="text-xs font-bold text-blue-600 uppercase tracking-widest mb-3 text-center">{t('auth.demoTitle')}</p>
                 <div className="flex gap-3">
                     <button
                         type="button"
                         onClick={() => handleDemoLogin('BUSINESS')}
                         className="flex-1 bg-white border border-blue-200 text-blue-700 py-2 rounded-xl text-xs font-bold hover:bg-blue-50 transition-colors shadow-sm"
                     >
-                        Demo Doanh nghiệp
+                        {t('auth.demoBusiness')}
                     </button>
                     <button
                         type="button"
                         onClick={() => handleDemoLogin('TALENT')}
                         className="flex-1 bg-white border border-blue-200 text-blue-700 py-2 rounded-xl text-xs font-bold hover:bg-blue-50 transition-colors shadow-sm"
                     >
-                        Demo Ứng viên
+                        {t('auth.demoTalent')}
                     </button>
                 </div>
             </div>
@@ -100,7 +103,7 @@ export default function LoginForm() {
             <div className="space-y-5">
                 <div className="space-y-2">
                     <label className="text-xs font-bold text-gray-400 uppercase tracking-widest ml-1" htmlFor="email">
-                        Địa chỉ Email
+                        {t('auth.email')}
                     </label>
                     <div className="relative group">
                         <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300 group-focus-within:text-primary transition-colors" size={18} />
@@ -118,7 +121,7 @@ export default function LoginForm() {
                 </div>
                 <div className="space-y-2">
                     <label className="text-xs font-bold text-gray-400 uppercase tracking-widest ml-1" htmlFor="password">
-                        Mật khẩu
+                        {t('auth.password')}
                     </label>
                     <div className="relative group">
                         <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300 group-focus-within:text-primary transition-colors" size={18} />
@@ -152,15 +155,16 @@ export default function LoginForm() {
 
 function LoginButton() {
     const { pending } = useFormStatus();
+    const { t } = useLanguage();
 
     return (
         <button
             className="flex w-full items-center justify-center gap-3 rounded-2xl bg-primary px-8 py-4 text-lg font-extrabold text-white transition-all hover:bg-red-800 hover:shadow-2xl hover:shadow-red-900/30 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:opacity-50 disabled:translate-y-0 active:scale-[0.98]"
             aria-disabled={pending}
         >
-            {pending ? 'Đang xác thực...' : (
+            {pending ? t('auth.authenticating') : (
                 <>
-                    Đăng nhập ngay
+                    {t('auth.loginNow')}
                     <ArrowRight size={20} />
                 </>
             )}
@@ -168,6 +172,3 @@ function LoginButton() {
     );
 }
 
-function clsx(...classes: any[]) {
-    return classes.filter(Boolean).join(' ');
-}

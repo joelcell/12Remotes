@@ -1,15 +1,29 @@
-import { auth, signOut } from "@/auth";
-import { LayoutDashboard, Briefcase, Search, Settings, FileText, Heart, Eye, CheckCircle, Clock, MapPin, DollarSign, MoreHorizontal, User } from "lucide-react";
-import Link from "next/link";
+'use client';
 
-export default async function TalentDashboard() {
-    const session = await auth();
+import React, { useEffect, useState } from "react";
+import { LayoutDashboard, Briefcase, Search, Settings, FileText, Heart, Eye, Clock, User, MoreHorizontal } from "lucide-react";
+import Link from "next/link";
+import { useLanguage } from "@/context/LanguageContext";
+import { getTalentSession } from "@/app/lib/talent-actions";
+import { signOut } from "next-auth/react";
+
+export default function TalentDashboard() {
+    const { t, language } = useLanguage();
+    const [session, setSession] = useState<any>(null);
+    const [isLoading, setIsLoading] = useState(true);
+
+    useEffect(() => {
+        getTalentSession().then(s => {
+            setSession(s);
+            setIsLoading(false);
+        });
+    }, []);
 
     // Mock data for Talent Dashboard
     const stats = [
-        { label: "Ứng tuyển", value: 14, icon: <FileText className="text-blue-600" />, trend: "+3 tuần này" },
-        { label: "Lượt xem hồ sơ", value: 128, icon: <Eye className="text-purple-600" />, trend: "+15% vs tháng trước" },
-        { label: "Đang phỏng vấn", value: 2, icon: <Clock className="text-orange-600" />, trend: "1 buổi hôm nay" },
+        { label: language === 'vi' ? "Ứng tuyển" : "Applications", value: 14, icon: <FileText className="text-blue-600" />, trend: language === 'vi' ? "+3 tuần này" : "+3 this week" },
+        { label: language === 'vi' ? "Lượt xem hồ sơ" : "Profile Views", value: 128, icon: <Eye className="text-purple-600" />, trend: language === 'vi' ? "+15% vs tháng trước" : "+15% vs last month" },
+        { label: language === 'vi' ? "Đang phỏng vấn" : "Interviewing", value: 2, icon: <Clock className="text-orange-600" />, trend: language === 'vi' ? "1 buổi hôm nay" : "1 today" },
     ];
 
     const recentApplications = [
@@ -17,6 +31,10 @@ export default async function TalentDashboard() {
         { id: 2, title: "Lead Product Designer", company: "Creative Minds", date: "2/2/2026", status: "Interviewing", salary: "$2500 - $4000" },
         { id: 3, title: "DevOps Specialist", company: "CloudScale Inc", date: "28/1/2026", status: "Rejected", salary: "$4000 - $5500" },
     ];
+
+    if (isLoading) return <div className="min-h-screen flex items-center justify-center font-bold text-primary animate-pulse">{t('common.loading')}</div>;
+
+    const clsx = (...classes: any[]) => classes.filter(Boolean).join(' ');
 
     return (
         <div className="min-h-screen bg-gray-50 flex">
@@ -27,16 +45,16 @@ export default async function TalentDashboard() {
                         <LayoutDashboard className="fill-current" />
                         12Remotes
                     </h2>
-                    <p className="text-xs text-muted mt-1 uppercase tracking-wider font-semibold">Talent Console</p>
+                    <p className="text-xs text-muted mt-1 uppercase tracking-wider font-semibold">{t('dashboard_talent.title')}</p>
                 </div>
 
                 <nav className="flex-1 px-4 space-y-1">
-                    <NavItem icon={<LayoutDashboard size={20} />} label="Tổng quan" active />
-                    <NavItem icon={<Briefcase size={20} />} label="Tìm việc làm" href="/marketplace" />
-                    <NavItem icon={<FileText size={20} />} label="Việc đã ứng tuyển" badge={14} />
-                    <NavItem icon={<Heart size={20} />} label="Việc làm đã lưu" badge={5} />
-                    <NavItem icon={<User size={20} />} label="Hồ sơ cá nhân" />
-                    <NavItem icon={<Settings size={20} />} label="Cài đặt" href="/dashboard/talent/settings" />
+                    <NavItem icon={<LayoutDashboard size={20} />} label={t('dashboard_talent.overview')} active />
+                    <NavItem icon={<Briefcase size={20} />} label={t('dashboard_talent.findJobs')} href="/marketplace" />
+                    <NavItem icon={<FileText size={20} />} label={t('dashboard_talent.appliedJobs')} badge={14} />
+                    <NavItem icon={<Heart size={20} />} label={t('dashboard_talent.savedJobs')} badge={5} />
+                    <NavItem icon={<User size={20} />} label={t('dashboard_talent.profile')} />
+                    <NavItem icon={<Settings size={20} />} label={t('common.settings')} href="/dashboard/talent/settings" />
                 </nav>
 
                 <div className="p-4 border-t border-gray-100">
@@ -47,16 +65,12 @@ export default async function TalentDashboard() {
                             <p className="text-xs text-gray-500 truncate w-32">{session?.user?.email}</p>
                         </div>
                     </div>
-                    <form
-                        action={async () => {
-                            'use server';
-                            await signOut();
-                        }}
+                    <button
+                        onClick={() => signOut()}
+                        className="w-full text-sm font-medium text-red-600 hover:bg-red-50 py-2 rounded-lg transition-colors"
                     >
-                        <button className="w-full text-sm font-medium text-red-600 hover:bg-red-50 py-2 rounded-lg transition-colors">
-                            Đăng xuất
-                        </button>
-                    </form>
+                        {t('common.signOut')}
+                    </button>
                 </div>
             </aside>
 
@@ -65,12 +79,16 @@ export default async function TalentDashboard() {
                 {/* Header */}
                 <div className="flex justify-between items-center mb-8">
                     <div>
-                        <h1 className="text-2xl font-bold text-gray-900">Chào mừng trở lại, {session?.user?.name?.split(' ')[0] || "Bạn"}!</h1>
-                        <p className="text-gray-500">Xem tiến độ ứng tuyển và các cơ hội mới nhất.</p>
+                        <h1 className="text-2xl font-bold text-gray-900">
+                            {language === 'vi' ? 'Chào mừng trở lại' : 'Welcome back'}, {session?.user?.name?.split(' ')[0] || (language === 'vi' ? 'Bạn' : 'User')}!
+                        </h1>
+                        <p className="text-gray-500">
+                            {language === 'vi' ? 'Xem tiến độ ứng tuyển và các cơ hội mới nhất.' : 'Check your application progress and latest opportunities.'}
+                        </p>
                     </div>
                     <Link href="/marketplace" className="bg-primary text-white px-5 py-2.5 rounded-xl font-bold hover:bg-red-800 transition-all flex items-center gap-2 shadow-xl shadow-red-900/10">
                         <Search size={18} />
-                        Tìm việc ngay
+                        {t('dashboard_talent.findJobs')}
                     </Link>
                 </div>
 
@@ -84,18 +102,20 @@ export default async function TalentDashboard() {
                 {/* Recent Applications Section */}
                 <div className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
                     <div className="p-6 border-b border-gray-100 flex justify-between items-center bg-white">
-                        <h3 className="font-bold text-lg text-gray-900">Việc làm đã ứng tuyển gần đây</h3>
-                        <Link href="#" className="text-sm text-primary font-bold hover:underline">Xem tất cả</Link>
+                        <h3 className="font-bold text-lg text-gray-900">{t('dashboard_talent.recentApplications')}</h3>
+                        <Link href="#" className="text-sm text-primary font-bold hover:underline">
+                            {language === 'vi' ? 'Xem tất cả' : 'View all'}
+                        </Link>
                     </div>
                     <div className="overflow-x-auto">
                         <table className="w-full text-left">
                             <thead className="bg-gray-50/50 text-gray-400 text-xs font-bold uppercase tracking-widest border-b border-gray-100">
                                 <tr>
-                                    <th className="px-6 py-4">Vị trí & Công ty</th>
-                                    <th className="px-6 py-4">Trạng thái</th>
-                                    <th className="px-6 py-4">Mức lương</th>
-                                    <th className="px-6 py-4">Ngày nộp</th>
-                                    <th className="px-6 py-4 text-right">Thao tác</th>
+                                    <th className="px-6 py-4">{language === 'vi' ? 'Vị trí & Công ty' : 'Role & Company'}</th>
+                                    <th className="px-6 py-4">{language === 'vi' ? 'Trạng thái' : 'Status'}</th>
+                                    <th className="px-6 py-4">{language === 'vi' ? 'Mức lương' : 'Salary'}</th>
+                                    <th className="px-6 py-4">{language === 'vi' ? 'Ngày nộp' : 'Date'}</th>
+                                    <th className="px-6 py-4 text-right">{language === 'vi' ? 'Thao tác' : 'Actions'}</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-gray-100">
@@ -118,7 +138,9 @@ export default async function TalentDashboard() {
                                                     app.status === "Interviewing" && "bg-orange-500",
                                                     app.status === "Rejected" && "bg-red-500"
                                                 )}></div>
-                                                {app.status}
+                                                {app.status === "Reviewing" ? t('dashboard_talent.status.reviewing') :
+                                                    app.status === "Interviewing" ? t('dashboard_talent.status.interviewing') :
+                                                        t('dashboard_talent.status.rejected')}
                                             </span>
                                         </td>
                                         <td className="px-6 py-4 text-sm font-bold text-gray-700">{app.salary}</td>
@@ -155,6 +177,7 @@ function StatCard({ icon, label, value, trend }: { icon: React.ReactNode, label:
 }
 
 function NavItem({ icon, label, active, badge, href = "#" }: { icon: React.ReactNode, label: string, active?: boolean, badge?: number, href?: string }) {
+    const clsx = (...classes: any[]) => classes.filter(Boolean).join(' ');
     return (
         <Link href={href} className={clsx(
             "flex items-center justify-between px-4 py-3 rounded-xl text-sm font-bold transition-all mb-1",
@@ -174,8 +197,4 @@ function NavItem({ icon, label, active, badge, href = "#" }: { icon: React.React
             )}
         </Link>
     );
-}
-
-function clsx(...classes: (string | boolean | undefined)[]) {
-    return classes.filter(Boolean).join(' ');
 }

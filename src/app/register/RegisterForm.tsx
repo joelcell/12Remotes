@@ -6,8 +6,11 @@ import { useFormStatus } from 'react-dom';
 import { Briefcase, User, Mail, Lock, ArrowRight, UserPlus } from 'lucide-react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
+import { useLanguage } from '@/context/LanguageContext';
+import clsx from 'clsx';
 
 export default function RegisterForm() {
+    const { t } = useLanguage();
     const searchParams = useSearchParams();
     const [errorMessage, dispatch] = useActionState(register, undefined);
     const initialRole = (searchParams.get('role') as 'BUSINESS' | 'TALENT') || 'TALENT';
@@ -33,7 +36,7 @@ export default function RegisterForm() {
                     onClick={() => setRole('BUSINESS')}
                 >
                     <Briefcase size={18} className="mr-2" />
-                    Doanh nghiệp
+                    {t('auth.business')}
                 </button>
                 <button
                     type="button"
@@ -44,7 +47,7 @@ export default function RegisterForm() {
                     onClick={() => setRole('TALENT')}
                 >
                     <User size={18} className="mr-2" />
-                    Ứng viên
+                    {t('auth.talent')}
                 </button>
                 <input type="hidden" name="role" value={role} />
             </div>
@@ -52,7 +55,7 @@ export default function RegisterForm() {
             <div className="space-y-5">
                 <div className="space-y-2">
                     <label className="text-xs font-bold text-gray-400 uppercase tracking-widest ml-1" htmlFor="name">
-                        Họ và tên
+                        {t('auth.fullName')}
                     </label>
                     <div className="relative group">
                         <UserPlus className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300 group-focus-within:text-primary transition-colors" size={18} />
@@ -69,7 +72,7 @@ export default function RegisterForm() {
 
                 <div className="space-y-2">
                     <label className="text-xs font-bold text-gray-400 uppercase tracking-widest ml-1" htmlFor="email">
-                        Địa chỉ Email
+                        {t('auth.email')}
                     </label>
                     <div className="relative group">
                         <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300 group-focus-within:text-primary transition-colors" size={18} />
@@ -86,7 +89,7 @@ export default function RegisterForm() {
 
                 <div className="space-y-2">
                     <label className="text-xs font-bold text-gray-400 uppercase tracking-widest ml-1" htmlFor="password">
-                        Mật khẩu
+                        {t('auth.password')}
                     </label>
                     <div className="relative group">
                         <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300 group-focus-within:text-primary transition-colors" size={18} />
@@ -120,15 +123,16 @@ export default function RegisterForm() {
 
 function SignUpButton() {
     const { pending } = useFormStatus();
+    const { t } = useLanguage();
 
     return (
         <button
             className="flex w-full items-center justify-center gap-3 rounded-2xl bg-primary px-8 py-4 text-lg font-extrabold text-white transition-all hover:bg-red-800 hover:shadow-2xl hover:shadow-red-900/30 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:opacity-50 disabled:translate-y-0 active:scale-[0.98]"
             aria-disabled={pending}
         >
-            {pending ? 'Đang tạo tài khoản...' : (
+            {pending ? t('common.loading') : (
                 <>
-                    Bắt đầu ngay
+                    {t('auth.registerNow') || t('auth.register')}
                     <ArrowRight size={20} />
                 </>
             )}
@@ -136,6 +140,3 @@ function SignUpButton() {
     );
 }
 
-function clsx(...classes: any[]) {
-    return classes.filter(Boolean).join(' ');
-}

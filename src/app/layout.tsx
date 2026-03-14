@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import SessionWrapper from "@/components/SessionWrapper";
+import { LanguageProvider } from "@/context/LanguageContext";
+import LanguageSwitcher from "@/components/ui/LanguageSwitcher";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -21,9 +23,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${inter.variable} font-sans antialiased min-h-screen flex flex-col`}>
-        <SessionWrapper>
-          {children}
-        </SessionWrapper>
+        <LanguageProvider>
+          <LanguageSwitcher />
+          <SessionWrapper>
+            {children}
+          </SessionWrapper>
+        </LanguageProvider>
       </body>
     </html>
   );

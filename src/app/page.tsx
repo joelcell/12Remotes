@@ -7,8 +7,11 @@ import PartnerLogos from "@/components/ui/PartnerLogos";
 import JobCategories from "@/components/ui/JobCategories";
 import { ArrowRight, Globe, ShieldCheck, Zap, Briefcase } from "lucide-react";
 import Image from "next/image";
+import { useLanguage } from "@/context/LanguageContext";
 
 export default function Home() {
+  const { t } = useLanguage();
+
   return (
     <div className="min-h-screen bg-background text-foreground overflow-x-hidden relative flex flex-col">
       <Header />
@@ -32,7 +35,7 @@ export default function Home() {
 
           {/* Main Title: Bigger and Above */}
           <h1 className="animate-slide-up text-6xl md:text-8xl lg:text-9xl font-bold tracking-tighter text-transparent bg-clip-text bg-gradient-to-br from-primary to-red-600 drop-shadow-sm">
-            Văn Phòng Trên Mây
+            {t('hero.title')}
           </h1>
 
           {/* Slogan: Smaller */}
@@ -41,17 +44,16 @@ export default function Home() {
           </h2>
 
           <p className="animate-slide-up [animation-delay:400ms] text-lg text-muted max-w-2xl mx-auto leading-relaxed">
-            Platform for Managers to build and scale remote teams. <br />
-            We handle the legal, tax, and payments. You handle the work.
+            {t('hero.subtitle')}
           </p>
 
           <div className="animate-slide-up [animation-delay:600ms] flex flex-col sm:flex-row items-center justify-center gap-5 pt-8">
             <Link href="/register?role=BUSINESS" className="group bg-primary text-white text-lg px-10 py-5 rounded-full font-bold transition-all hover:bg-red-800 hover:shadow-2xl hover:shadow-red-900/30 hover:-translate-y-1 flex items-center gap-3">
-              Doanh Nghiệp (Tuyển dụng)
+              {t('auth.business')} ({t('nav.postJob')})
               <ArrowRight className="group-hover:translate-x-1 transition-transform" />
             </Link>
             <Link href="/register?role=TALENT" className="group bg-white border-2 border-primary text-primary text-lg px-10 py-5 rounded-full font-bold transition-all hover:bg-red-50 hover:shadow-2xl hover:shadow-red-900/5 hover:-translate-y-1 flex items-center gap-3">
-              Ứng Viên (Tìm việc)
+              {t('auth.talent')} ({t('nav.findJobs')})
               <Briefcase className="group-hover:scale-110 transition-transform" size={20} />
             </Link>
           </div>
