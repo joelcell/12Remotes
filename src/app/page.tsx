@@ -34,7 +34,7 @@ export default function Home() {
         <div className="container mx-auto px-4 relative z-10 text-center space-y-8">
 
           {/* Main Title: Bigger and Above */}
-          <h1 className="animate-slide-up text-6xl md:text-8xl lg:text-9xl font-bold tracking-tighter text-transparent bg-clip-text bg-gradient-to-br from-primary to-red-600 drop-shadow-sm">
+          <h1 className="animate-slide-up text-5xl md:text-7xl lg:text-8xl font-bold tracking-tighter text-transparent bg-clip-text bg-gradient-to-br from-primary to-red-600 drop-shadow-sm">
             {t('hero.title')}
           </h1>
 

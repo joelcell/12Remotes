@@ -91,7 +91,7 @@ export const translations = {
             forBusiness: "Cho doanh nghiệp",
         },
         hero: {
-            title: "Tuyển dụng Top 1% Tài năng Toàn cầu",
+            title: "Văn phòng trên mây",
             subtitle: "12Remotes kết nối các công ty hàng đầu thế giới với những chuyên gia làm việc từ xa xuất sắc nhất.",
             getStarted: "Bắt đầu ngay",
             browseJobs: "Xem việc làm",
